@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from './actions';
 import * as Sidebar from './styles';
-import FlashIcon from 'react-icons/lib/io/flash';
+import { ToastContainer } from 'react-toastify';
 
 type Props = {
     logo: any,
@@ -40,14 +40,22 @@ export default class extends Component<Props>
     {
         const { logo, navigate } = this.props;
         const { hidden, hovered } = this.props.sidebar;
-        console.log(this.props);
 
         return (
             <Sidebar.Wrapper type={this.type()} onMouseEnter={this.enterHandler} onMouseLeave={this.leaveHandler}>
+                <ToastContainer
+                    className="toast-container"
+                    newestOnTop={false}
+                    pauseOnVisibilityChange={false}
+                    position="bottom-right"
+                    hideProgressBar
+                    closeOnClick
+                    draggable
+                ></ToastContainer>
                 <Sidebar.Logo to={logo.to}>
 					{ hidden && !hovered ?
-						<img src="http://haashman.ru/cabinet/dist/img/logo-mini.svg" alt="Hashman" width={50} /> :
-						<img src="http://haashman.ru/cabinet/dist/img/logo-mini.svg" alt="Hashman" width={100} />
+						<img src="/assets/images/logo.svg" alt="Hashman" width={50} /> :
+						<img src="/assets/images/logo.svg" alt="Hashman" width={100} />
                 	}
 					{ hidden && !hovered ?
 						null :

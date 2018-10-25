@@ -158,21 +158,6 @@ export const Different = styled.p`
 	margin-top: 5px;
 `;
 
-export const Message = styled.div`
-	position: fixed;
-	right: 15px;
-	bottom: 15px;
-	
-	color: ${ props => props.theme.colors.base.white };
-	padding: 15px 20px;
-	
-	z-index: 999999;
-	
-	justify-self: flex-start;
-	
-	background: ${ props => props.theme.notifications[props.type] };
-`;
-
 export const Default = styled(RefreshIcon)`
 	font-size: 12px;
 	
@@ -184,7 +169,6 @@ export const Default = styled(RefreshIcon)`
 `;
 
 export const Input = styled.input`
-	${ props => console.log(props.changed) };
 	${ props => props.changed ? `border-color: ${props.theme.notifications.warning} !important` : null };
 `;
 

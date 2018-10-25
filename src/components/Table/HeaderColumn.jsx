@@ -7,25 +7,35 @@ export default class extends Component
 {
     static defaultProps = {
         sorter: false,
-        filtered: false
+        filtered: false,
+        hide: false
     };
-
-    constructor(props, context)
-    {
-        super(props, context);
-    }
 
     element = React.createRef();
 
     change = (item, e) => {
-        if (e.target.checked)
-            this.props.addFilter({ column: this.props.index, filter: item, filterFunc: (record) => record[this.props.index].includes(item) });
-        else
+        if (e.target.checked) {
+            this.props.addFilter({ 
+                column: this.props.index, 
+                filter: item, 
+                filterFunc: record => record[this.props.index]
+                    ? typeof record[this.props.index] == "string"
+                        ? record[this.props.index] == item
+                        : record[this.props.index].includes(item)
+                    : false
+            });
+        }
+        else {
             this.props.removeFilter({ column: this.props.index, id: item });
+        }
     };
 
     render()
     {
+        if (this.props.hide) {
+            return null;
+        }
+
         const { label, sorter, filtered, index, activeFilter, compare, compareBy, sorterColumn, source } = this.props;
 
         return (

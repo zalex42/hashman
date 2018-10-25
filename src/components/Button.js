@@ -3,22 +3,16 @@ import { rem, lighten, transitions } from 'polished';
 
 export default styled.button`
   display: flex;
-  
   padding: 8px 25px;
-  
-  font-size: ${ rem('14px') };
   font-weight: 500;
-  color: ${ props => props.theme.colors.base.white };
-  
   border-radius: 4px;
+  font-size: ${ rem('14px') };
+  color: ${ props => props.theme.colors.base.white };
   border: 1px solid ${ props => props.theme.colors.notifications.border };
-  
-  background: ${ props => props.type ? props.theme.notifications[props.type] : props.theme.notifications.default };;
-  
-  ${ props => transitions(`border-color ${ props.theme.variables.animation.speed }`, `color ${ props.theme.variables.animation.speed }`) };
-  
+  background: ${ props => props.type ? props.theme.notifications[props.type] : props.theme.notifications.default };
   cursor: ${ props => props.disabled ? 'default' : 'pointer' };
   opacity: ${ props => props.disabled ? 0.5 : 1 };
+  ${ props => transitions(`border-color ${ props.theme.variables.animation.speed }`, `color ${ props.theme.variables.animation.speed }`) };
   
   &:hover {
     color: ${ props => props.theme.colors.base.white };

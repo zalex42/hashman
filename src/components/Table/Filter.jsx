@@ -34,7 +34,6 @@ export default class extends Component
                 <FilterModal opened={this.state.opened}>
                     { Object.keys(this.state.data).map((item, index) => (
                         <Checkbox key={index} name={item} onChange={(e) => this.props.change(item, e)}>
-							{console.log('Filter', item)}
                             {item} ({ this.state.data[item] })
                         </Checkbox>
                     )) }

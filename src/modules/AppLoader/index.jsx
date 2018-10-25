@@ -11,7 +11,9 @@ export default class extends Component
     {
         return (
             <Container>
-                <Loader src="http://haashman.ru/cabinet/dist/img/logo-mini.svg" alt="Hashman" />
+                <Loader src="/assets/images/logo.svg" alt="Hashman" />
+                <br/>
+                <div>Идёт загрузка, пожалуйста, подождите</div>
             </Container>
         );
     }

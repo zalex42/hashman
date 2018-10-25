@@ -17,6 +17,7 @@ export default class extends Component
 		selected: false,
 		footer: null,
         onRow: (record) => ({}),
+        styleRow: (record) => ({}),
 		onRowClick: (record) => ({}),
 		hideHeader: false,
 		style: null,
@@ -188,8 +189,6 @@ export default class extends Component
 			if (!selectedColumns.includes(column)) newColumns.push(column);
 		});
 
-		console.log('ADD',newColumns);
-
 		this.setState({ selectedColumns: newColumns });
 	};
 
@@ -251,7 +250,7 @@ export default class extends Component
             <Container>
                 <TableContainer>
                     { this.state.fixedHeader ? (
-                        <Table fixed top={this.state.headerPosition} onClick={(e) => console.log('TABLE')}>
+                        <Table fixed top={this.state.headerPosition}>
 							<Header ref="header">
 								<Row>
 									{ selected ? <SelectColumn all checked={this.allChecked()} hasActive={this.hasActive()} onChange={this.selectAll} /> : null }
@@ -271,7 +270,7 @@ export default class extends Component
                         ) : null }
                         <Body>
                             { source.map((item, index) => (
-                                <Row key={index} selected={this.state.selectedColumns.includes(item.RigID)}>
+                                <Row key={index} selected={this.state.selectedColumns.includes(item.RigID)} style={this.props.styleRow(item)}>
 									{ selected ? <SelectColumn { ...item } index={index} checked={selectedColumns.includes(item.RigID)} onChange={this.selectColumn} /> : null }
                                     { columns.map((column) => <Column onClick={() => this.props.onRowClick(item)} key={`${column.index}-${index}`} { ...column } record={ item } onRow={this.props.onRow} setColumnWidth={this.setColumnWidth} />) }
                                 </Row>

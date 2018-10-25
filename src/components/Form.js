@@ -114,30 +114,27 @@ export const Radio = styled.label`
 
 export const ToggleComp = styled.span`
   position: relative;
-  
   width: 60px;
   height: 30px;
-  
   margin-right: 10px;
-  
-  border: 1px solid ${ props => rgba(props.theme.colors.base.dark, 0.3) };
   border-radius: 30px;
+  border: 1px solid ${ props => rgba(props.theme.colors.base.dark, 0.3) };
+  ${ props => transitions(`border-color ${ props.theme.variables.animation.speed }`) };
+  ${ props => {
+    // console.log('Changed: ', props.changed);
+    return props.changed ? `border-color: ${props.theme.notifications.warning} !important` : null;
+  }}
   
   &:before {
     content: '';
-    
     position: absolute;
     top: 2px;
-    
-    left: ${ props => props.checked ? 'calc(100% - 24px - 3px)' : '3px' };
-    ${ props => transitions(`left ${ props.theme.variables.animation.speed }`) };
-    
     width: 24px;
     height: 24px;
-    
     border-radius: 50%;
-    
+    left: ${ props => props.checked ? 'calc(100% - 24px - 3px)' : '3px' };
     background: ${ props => props.checked ? props.theme.notifications.primary : rgba(props.theme.colors.base.dark, 0.3) };
+    ${ props => transitions(`left ${ props.theme.variables.animation.speed }`) };
   }
 `;
 
@@ -176,9 +173,9 @@ export class Checkbox extends Component
     }
 }
 
-export const Toggle = ({ checked, children, onChange }) => (
+export const Toggle = ({ checked, children, onChange, changed }) => (
     <Radio>
-        <ToggleComp checked={checked} />
+        <ToggleComp checked={checked} changed={changed} />
         <span>{ children }</span>
         <input type="checkbox" name={name} id={name} style={{ display: 'none' }} onChange={onChange} />
     </Radio>
