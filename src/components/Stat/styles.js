@@ -99,14 +99,21 @@ export const Item = styled.div`
 
 export const Title = styled.h3`
   margin-bottom: 5px;
-
   font-size: ${ rem('13px') };
   font-weight: 500 !important;
+  text-transform: uppercase !important;
   color: ${ props => props.theme.stat.title };
 `;
 
 export const Text = styled.div`
   font-size: ${ rem('17px') };
+  font-weight: 600 !important;
+  text-transform: none !important;
+  color: ${ props => props.theme.stat.text };
+`;
+
+export const TextTooltip = styled.div`
+  font-size: ${ rem('13px') };
   font-weight: 600 !important;
   text-transform: none !important;
   color: ${ props => props.theme.stat.text };
@@ -158,21 +165,6 @@ export const Different = styled.p`
 	margin-top: 5px;
 `;
 
-export const Message = styled.div`
-	position: fixed;
-	right: 15px;
-	bottom: 15px;
-	
-	color: ${ props => props.theme.colors.base.white };
-	padding: 15px 20px;
-	
-	z-index: 999999;
-	
-	justify-self: flex-start;
-	
-	background: ${ props => props.theme.notifications[props.type] };
-`;
-
 export const Default = styled(RefreshIcon)`
 	font-size: 12px;
 	
@@ -184,7 +176,6 @@ export const Default = styled(RefreshIcon)`
 `;
 
 export const Input = styled.input`
-	${ props => console.log(props.changed) };
 	${ props => props.changed ? `border-color: ${props.theme.notifications.warning} !important` : null };
 `;
 

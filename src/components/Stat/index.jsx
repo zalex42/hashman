@@ -1,39 +1,79 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
-import { Container, Content, Item, Title, Text, Buttons, Check, Error, Different, Message, Default, Input, Select, Textarea } from './styles';
+
 import Tabs from '~/components/Tabs';
 import Button from "~/components/Button";
 import { Toggle } from "~/components/Form";
-import { connect } from 'react-redux';
-import * as actions from '~/scenes/Rigs/actions';
 
-@connect((state) => ({
-	rigs: state.rigs
-}), actions)
-export default class extends Component
-{
+import { Container, Content, Item, Title, Text, Buttons, Check, Error, Different, Default, Input, Select, Textarea, EnabledBlock, EnabledLabel, TextTooltip } from './styles';
+//import {Image} from 'react-native';
+//import {Icon } from 'native-base';
+
+import {Tooltip} from '~/components/react-lightweight-tooltip';
+//import Icon from 'react-native-vector-icons/dist/FontAwesome';
+import CheckIcon from 'react-icons/lib/fa/info-circle';
+import CircleIcon from 'react-icons/lib/fa/circle';
+
+const greenRoundedStyle = {
+  content: {
+    backgroundColor: 'white',
+		color: '#000',
+		display: '10',
+		fontSize: '.8em',
+
+	},
+  tooltip: {
+    position: 'absolute',
+    backgroundColor: 'green',
+    borderRadius: '10px',
+    marginBottom: '0px',
+	},
+
+
+};
+
+export default class extends Component {
 	static defaultProps = {
 		items: {},
 		editable: false,
 		canReboot: false,
 		canEdit: false,
 		editMode: false,
+		alwaysEditMode: false,
 		canEditMode: false,
-		onCancel: () => {}
+		tabsSett: {}, // settings for tabs
+		wrapperSett: {}, // settings for styled component "Content"
+		onCancel: () => { },
+		onEdit: () => { },
+		onReboot: () => { }
 	};
 
-	constructor(props, context)
-	{
-		super(props, context);
+	state = {
+		tempInitItems: null,
+		tempCopyItems: null,
+		editMode: this.props.editMode,
+		renderProps: true // for control what now source for render - props.items or state.tempCopyItems
+	}
 
-		this.state = {
-			items: this.props.items,
-			copy: this.props.items,
-			editMode: this.props.editMode,
-			messageType: null,
-			showMessage: false,
-			message: '',
-			messageDelay: null,
+	componentDidMount() {
+		if (this.state.editMode && !this.props.alwaysEditMode) {
+			this.startEdit();
+		}
+	}
+
+	componentDidUpdate(prevProps) {
+		if (Object.keys(prevProps.items).length === 0 
+				&& Object.keys(this.props.items).length > 0
+				&& this.props.editMode) {
+			this.startEdit();
+		}
+
+		if (!this.state.renderProps && !_.isEqual(this.props.items, prevProps.items)) {
+			this.setState({
+				tempInitItems: null,
+				tempCopyItems: null,
+				renderProps: true
+			});
 		}
 	}
 
@@ -42,128 +82,231 @@ export default class extends Component
 			case 'bool': return <Toggle changed={item.edited} checked={item.Value} onChange={() => this.changeItem(item, rootItem, index, !item.Value)} />;
 			case 'text': return <Input changed={item.edited} type="text" value={item.Value || ''} placeholder={item.DefaultValue} onChange={(e) => this.changeItem(item, rootItem, index, e.target.value)} />;
 			case 'int': return <Input changed={item.edited} type="number" value={item.Value || ''} placeholder={item.DefaultValue} min={item.MinValue} max={item.MaxValue} step={item.StepValue} onChange={(e) => this.changeItem(item, rootItem, index, e.target.value)} />;
-			case 'textarea': return <Textarea placeholder={item.DefaultValue} onChange={(e) => this.changeItem(item, rootItem, index, e.target.value)}>{item.Value || ''}</Textarea>;
-			case 'select': return <Select value={item.Value} onChange={(e) => this.changeItem(item, rootItem, index, e.target.value)}><option value={false}>---</option>{ Object.keys(item.SelectParams).map((param, paramIndex) => <option key={paramIndex} value={param}>{item.SelectParams[param]}</option>) }</Select>;
+			case 'textarea': return <Textarea  placeholder={item.DefaultValue} onChange={(e) => this.changeItem(item, rootItem, index, e.target.value)}>{item.Value || ''}</Textarea>;
+			case 'select': return <Select value={item.Value} onChange={(e) => this.changeItem(item, rootItem, index, e.target.value)}><option value={false}>---</option>{Object.keys(item.SelectParams).map((param, paramIndex) => <option key={paramIndex} value={param}>{item.SelectParams[param]}</option>)}</Select>;
 			default: return <div>---</div>;
 		}
 	};
 
-	changeItem = (item, rootItem, index, value) => {
-		const newGroup = [];
+	renderEditCurrentValue = (item, rootItem, index) => {
+	
+		if (this.props.alwaysEditMode2 == "true") {
+			switch (item.Type) {
+			case 'bool': return item.currentValue ? <CircleIcon color = "green" size = "30" /> : <CircleIcon color = "red" size = "30" />;
+			case 'text': return <div> {item.currentValue} </div>; 
+			case 'int': return <div> {item.currentValue}</div>; 
+//			case 'textarea': return <Textarea  placeholder={item.DefaultValue} onChange={(e) => this.changeItem(item, rootItem, index, e.target.value)}>{item.Value || ''}</Textarea>;
+//			case 'select': return <Select value={item.currentValue} onChange={(e) => this.changeItem(item, rootItem, index, e.target.value)}><option value={false}>---</option>{Object.keys(item.SelectParams).map((param, paramIndex) => <option key={paramIndex} value={param}>{item.SelectParams[param]}</option>)}</Select>;
+			default: return <div>---</div>;
+			}
+		}
+	};
 
-		this.state.copy[rootItem].map((field, fieldIndex) => {
-			newGroup.push(fieldIndex === index ? { ...field, Value: value || null, edited: true } : field);
+	changeItem = (item, rootItem, index, value) => {
+		const newGroup = _.cloneDeep(this.state.tempCopyItems[rootItem]);
+		newGroup[index].Value = value || null;
+		newGroup[index].edited = true;
+		this.setState({
+			tempCopyItems: {
+				...this.state.tempCopyItems,
+				[rootItem]: newGroup
+			}
+		});
+	};
+
+	renderEnabled = (item, rootItem, index) => {
+		return item.useEnabled ? (
+			<EnabledBlock>
+				<EnabledLabel>Использовать:</EnabledLabel>
+				<Toggle checked={item.isEnabled} onChange={() => this.changeEnabled(item, rootItem, index)} />
+			</EnabledBlock>
+		) : null;
+	};
+
+	changeEnabled = (item, rootItem, index) => {
+		const copy = _.cloneDeep(this.state.tempCopyItems[rootItem]);
+		copy[index].isEnabled = !copy[index].isEnabled
+		this.setState({
+			tempCopyItems: {
+				...this.state.tempCopyItems,
+				[rootItem]: copy
+			}
+		});
+	};
+
+	startEdit = () => {
+		this.setState({
+			editMode: true,
+			tempInitItems: _.cloneDeep(this.props.items),
+			tempCopyItems: _.cloneDeep(this.props.items),
+			renderProps: false
+		});
+	}
+
+	editFacade = async (reboot = false, cancel = false) => {
+		const { tempCopyItems } = this.state;
+
+		const result = [];
+
+		Object.keys(tempCopyItems).map((group) => {
+			_.map(tempCopyItems[group], (item) => {
+				result.push({
+					name: item.Name,
+					value: item.Value,
+					isEnabled: item.isEnabled,
+					edited: item.edited || false
+				});
+			})
 		});
 
-		this.setState({ copy: { ...this.state.copy, [rootItem]: newGroup } });
-	};
+		await this.props.onEdit(result);
 
-	editWithReboot = async () => {
-		if(confirm('Вы действительно хотите изменить и перезапустить выбранные устройства?')) {
-			this.setState({showMessage: false});
-			await this.edit(this.props.ids);
-			await this.props.reboot(this.props.ids);
-
-			if (typeof this.props.rigs.config === 'string')
-				this._showMessage('error', this.props.rigs.config);
-			else
-				this._showMessage('success', 'Успешно перезагружено');
+		if (reboot) {
+			await this.props.onReboot();
 		}
-	};
 
-	edit = async () => {
-		if(confirm('Вы действительно хотите изменить выбранные устройства?')) {
-			const {copy} = this.state;
-
-			this.setState({showMessage: false});
-
-			const result = [];
-
-			Object.keys(copy).map((group) => {
-				_.map(copy[group], (item) => {
-					result.push({
-						name: item.Name,
-						value: item.Value,
-						isEnabled: item.isEnabled,
-						edited: item.edited || false
-					});
-				})
-			});
-
-			await this.props.edit(this.props.ids, result);
-
-			if (typeof this.props.rigs.config === 'string')
-				this._showMessage('error', this.props.rigs.error.message);
-			else
-				this._showMessage('success', 'Изменения успешно изменены');
+		this.setState({
+			editMode: !this.state.editMode || this.props.alwaysEditMode || this.props.alwaysEditMode2
+		});
+		if (this.props.alwaysEditMode2 == null) {
+			if (cancel) {
+				this.props.onCancel();
+			}
 		}
-	};
-
-	_showMessage = (type, message) => {
-		clearTimeout(this.state.messageDelay);
-		this.setState({ messageType: type, showMessage: true, message });
-
-		this.setState({ messageDelay: setTimeout(() => this.setState({ showMessage: false }), 10000) });
-	};
+	}
 
 	setDefault = (item, rootItem, index) => {
-		const newGroup = [];
-
-		this.state.copy[rootItem].map((field, fieldIndex) => {
-			if (fieldIndex === index) {
-				let currentItem = null;
-				this.state.items[rootItem].map((itemField, itemIndex) => {
-					if (itemIndex === index)
-						currentItem = itemField;
-				});
-
-				newGroup.push({ ...field, Value: currentItem.Value, edited: false });
-			}
-			else {
-				newGroup.push(field);
+		const copy = _.cloneDeep(this.state.tempCopyItems[rootItem]);
+		copy[index] = this.state.tempInitItems[rootItem][index];
+		this.setState({
+			tempCopyItems: {
+				...this.state.tempCopyItems,
+				[rootItem]: copy
 			}
 		});
-
-		this.setState({ copy: { ...this.state.copy, [rootItem]: newGroup } });
 	};
+
+	cancel = () => {
+		let newState = { 
+			editMode: !this.state.editMode || this.props.alwaysEditMode,
+			renderProps: true
+		};
+
+		if (this.props.alwaysEditMode) {
+			newState.tempInitItems = _.cloneDeep(this.props.items);
+			newState.tempCopyItems = _.cloneDeep(this.props.items);
+		}
+
+		this.setState(newState); 
+		this.props.onCancel()
+	}
 
 	getItems = () => {
 		const items = [];
-		_.map(Object.keys(this.state.copy), (item, index) =>
+
+		const group = this.state.editMode && !this.state.renderProps || this.props.alwaysEditMode
+			? this.state.tempCopyItems ? this.state.tempCopyItems : this.props.items
+			: this.props.items;
+			
+
+		_.map(Object.keys(group), (item, index) =>
 			items.push({
 				label: item,
 				index: index,
-				content: <Content>
-					{ _.map(this.state.copy[item], (subitem, subindex) =>
-						(subitem.Miners === null || subitem.Miners.includes(this.state.copy['Майнинг'].filter(item => item.Name === 'RUN')[0].Value)) ?
+				content: <Content {...this.props.wrapperSett}>
+					{_.map(group[item], (subitem, subindex) =>
+						(!subitem.Miners || subitem.Miners === null || subitem.Miners.includes(group['Майнинг'].filter(item => item.Name === 'RUN')[0].Value))
+							?	// (!subitem.Coins || subitem.Coins.includes(group['Майнинг'].filter(item => item.Name === 'COIN')[0].Value)) ?
+
 							<Item key={subindex}>
 								<Title>{subitem.Description}</Title>
-								{ this.state.editMode ?
-									<div style={{ display: 'flex', alignItems: 'center' }}>
-										{
-											this.renderEdit(subitem, item, subindex)
-										}
-										<Default onClick={() => this.setDefault(subitem, item, subindex)} title="Вернуть значение" />
-									</div> : <Text>{subitem.Type === 'select' ? subitem.SelectParams[subitem.Value] :  subitem.Type === 'bool' ?  subitem.Value ? <Check /> : <Error /> : subitem.Value || '---'}</Text> }
-								{ subitem.isDifferent ? <Different>Настройки отличаются</Different> : null }
+								{
+									this.state.editMode
+										?
+										<div style={{ display: 'flex', alignItems: 'center'}}>
+											{this.renderEdit(subitem, item, subindex)}
+											{this.renderEditCurrentValue(subitem, item, subindex)}
+
+											{<Tooltip 
+																content = {
+																	<TextTooltip>
+																								{
+																									subitem.Hint
+																								} 
+																							</TextTooltip>
+																}
+																styles={greenRoundedStyle}
+												>
+											<CheckIcon />
+											</Tooltip>}
+
+											{
+												this.renderEnabled(subitem, item, subindex)
+											}
+											
+											<Default onClick={() => this.setDefault(subitem, item, subindex)} title="Вернуть значение" />
+											
+										</div>
+									
+									
+										:
+										
+										!(subitem.isEnabled) & (item=="Разгон" || item=="Основные" || item=="Майнинг")
+										?
+										<Text style= {{textDecoration: "line-through", color: "gainsboro"}}>
+											{
+												subitem.Type === 'select'
+													? subitem.SelectParams[subitem.Value]
+													: subitem.Type === 'bool'
+														? subitem.Value
+															? <Check />
+															: <Error />
+														: subitem.Value || '---'
+											
+											} 
+										</Text>
+										:
+										<Text>
+											{
+												subitem.Type === 'select'
+													? subitem.SelectParams[subitem.Value]
+													: subitem.Type === 'bool'
+														? subitem.Value
+															? <Check />
+															: <Error />
+														: subitem.Value || '---'
+											
+											} 
+										</Text>
+								}
+								{subitem.isDifferent ? <Different>Настройки отличаются</Different> : null}
 							</Item>
-						: null)
+							// : null
+			: null)
 					}
-					{ !this.props.editable ? (
-						<Item>
-							{ this.state.editMode ? (
-								<Buttons>
-									{ this.props.canEdit ? <Button type="success" onClick={this.edit}>Сохранить</Button> : null }
-									{ this.props.canReboot && this.props.canEdit ? <Button type="warning" onClick={this.editWithReboot}>Сохранить с перезагрузкой</Button> : null }
-									<Button type="error" onClick={() => { this.setState({ editMode: !this.state.editMode, copy: this.state.items }); this.props.onCancel() }}>Отмена</Button>
-								</Buttons>
-							) : (
-								<Buttons>
-									{ this.props.canEditMode ? <Button type="success" onClick={() => this.setState({ editMode: !this.state.editMode })}>Редактировать</Button> : null }
-								</Buttons>
-							) }
-						</Item>
-					) : null }
+					{
+						!this.props.editable
+							? (
+								<Item>
+									{
+										this.state.editMode
+											? (
+												<Buttons>
+													{this.props.canEdit ? <Button type="success" onClick={() => { this.editFacade(false, true); }}>Сохранить</Button> : null}
+													{this.props.canReboot && this.props.canEdit ? <Button type="warning" onClick={() => { this.editFacade(true, true); }}>Сохранить с перезагрузкой</Button> : null}
+													<Button type="error" onClick={this.cancel}>Отмена</Button>
+												</Buttons>
+											)
+											: (
+												<Buttons>
+													{this.props.canEditMode ? <Button type="success" onClick={this.startEdit}>Редактировать</Button> : null}
+												</Buttons>
+											)
+									}
+								</Item>
+							)
+							: null
+					}
 				</Content>
 			})
 		);
@@ -171,12 +314,10 @@ export default class extends Component
 		return items;
 	};
 
-	render()
-	{
+	render() {
 		return (
-			<Container>
-				<Tabs items={this.getItems()} />
-				{ this.state.showMessage ? <Message type={this.state.messageType}>{ this.state.message }</Message> : null }
+		<Container>
+				<Tabs items={this.getItems()} {...this.props.tabsSett} />
 			</Container>
 		);
 	}
