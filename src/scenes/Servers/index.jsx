@@ -17,6 +17,7 @@ import Title from '~/components/Title';
 import Paper from '~/components/Paper';
 import { Table } from '~/components/Table';
 import Tag, { Group } from '~/components/Tag';
+import Tag2 from '~/components/Tag2';
 import Tabs from '~/components/Tabs';
 import { Row, Col } from '~/components/Grid';
 import * as ToolTip from '~/components/ToolTip';
@@ -24,6 +25,11 @@ import EventInformer from '~/components/EventInformer';
 import ChartTemper from '~/components/ChartTemper';
 
 import * as actions from './actions';
+import Modal from '~/components/Modal';
+import CoolFan from '~/components/StatCoolFan';
+import { CloseIcon} from './styles';
+import FaCloseIcon from 'react-icons/lib/fa/close';
+import Button from '~/components/Button2';
 
 
 const TooltipStability = (props) => (
@@ -68,8 +74,13 @@ export default class extends Component
     state = {
         update: null,
 		activeChart: null,
-		showCharts: true
+		showCharts: true,
+		iseditCoolFan: false,
+		id: null,
+        presseditCoolFan: false,
+        currRow: null
     };
+
 
     async componentDidMount()
     {
@@ -168,6 +179,31 @@ export default class extends Component
         return arr;
     };
 
+    getSettings = () => {
+		const group = {};
+		_.map(this.props.servers.gconfig, (item) => {
+			if (!group[item.Group]) group[item.Group] = [];
+			group[item.Group].push(item);
+		});
+
+		return group;
+	};
+
+    editCoolFanCancel() {
+        this.setState({ iseditCoolFan: false });
+//        this.setState({ presseditCoolFan: false });
+    }
+
+    editCoolFan = async (id) => {
+     //   this.setState({ presseditCoolFan: true });
+		await this.props.getCoolFanConfig(id);
+		this.openeditCoolFan(id);
+	};
+
+    openeditCoolFan = (id) => {
+    	this.setState({ iseditCoolFan: true, id });
+	};
+
     render()
     {
         const { servers } = this.props;
@@ -241,9 +277,10 @@ export default class extends Component
                                             sorter: true, compare: (a, b) => a.ServerName.localeCompare(b.ServerName),
                                             render: (value, record) => (
                                                 <div>
-                                                    { value } <Tag type="hidden">({ record.RigsTotal })</Tag>
-                                                </div>
+                                                 <Button onClick={() => this.props.history.push(`/rigs/${record.ServerID}`)}>{ value } <Tag2 type="hidden">({ record.RigsTotal })</Tag2></Button>   
+                                                 </div>
                                             )
+
                                         },
                                         {
                                             label: 'Температура (GPU)',
@@ -263,7 +300,20 @@ export default class extends Component
                                         {
                                             label: 'Вентиляция',
                                             index: 'CoolFan',
-                                            render: (value) => value < 0 ? '---' : <Tag>{ `${value} %` }</Tag>
+                                            render: (value, record) => 
+                                            (<div style={{ display: 'flex' }}>
+
+                                                <Button onClick={() => this.editCoolFan(record.ServerID)}> {value < 0 ? '---' : <Tag>{ `${value} %` }</Tag>}</Button>
+                                                </div>)
+                                                
+                                             //value < 0 ? '---' : <Tag>{ `${value} %` }</Tag>
+//                                            render: (value, record) => value < 0 ? <a href={`/vent/${record.ServerID}`} > --- </a> : <a href={`/vent/${record.ServerID}`} > <Tag>{ `${value} %` }</Tag> </a> 
+//                                            render: (value, record) => value < 0 ? <a href={this.editCoolFan(record.ServerID)} > --- </a> : <a href={this.editCoolFan(props.selectedColumns)} > <Tag>{ `${value} %` }</Tag> </a> 
+                                        },
+                                        {
+                                            label: 'Питание',
+                                            index: 'power',
+                                            render: (value, record) => <a href={record.powerurl} > {value} </a>
                                         },
                                         {
                                             label: 'Хэшрейт',
@@ -287,11 +337,24 @@ export default class extends Component
                                         },
                                     ]}
                                     dataSource={servers.entities}
-                                    onRowClick={(record) => this.props.history.push(`/rigs/${record.ServerID}`)}
-                                  />
+//                                    onRowClick={(record) => { !this.state.presseditCoolFan ? this.props.history.push(`/rigs/${record.ServerID}`) : null }}
+//                                    onRow={(record) => { this.state.currRow === record.index }}
+                                    />
                                 : null
                         }
-
+                        { this.state.iseditCoolFan 
+                                ? <Modal unMount={() => this.editCoolFanCancel()} 
+                                        loading={this.props.servers.pending.loading}><CoolFan 
+                                        editMode 
+//                                        canReboot="false" 
+                                        canEdit="true" 
+                                        alwaysEditMode2="true" 
+                                        id={this.state.id} 
+                                        items={this.getSettings()} 
+                                        onCancel={() => { this.editCoolFanCancel(); }} />
+                                </Modal> 
+                                : null }
+            
                     </LoaderContainer>
                 </Paper>
             </div>
