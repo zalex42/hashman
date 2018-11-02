@@ -18,6 +18,8 @@ import isMobile from '~/utils/isMobile';
 
 import * as actions from './actions';
 
+//import Translate from '~/components/Translate';
+var Translate = require('~/components/Translate');
 
 @hot(module)
 @connect((state) => ({
@@ -30,6 +32,7 @@ export default class extends Component
 		editMode: false,
 		ids: []
 	};
+    deleteDis = true;
 
     async componentDidMount()
     {
@@ -60,6 +63,22 @@ export default class extends Component
 				this._showMessage('success', 'Успешно перезагружено');
 		}
 	};
+
+	deleteH = async (ids) => {
+		if(confirm('Вы действительно хотите удалить выбранные устройства?')) {
+			await this.props.deleteH(ids);
+
+//			if (this.props.rigs.config != true)
+//				this._showMessage('error', this.props.rigs.config.message);
+        if (typeof this.props.rigs.config === 'string')
+            this._showMessage('error', this.props.rigs.config);
+        else
+				this._showMessage('success', 'Успешно удалено');
+		}
+ //       this.props.history.push(`/rigs/${this.props.server.ServerID}`);
+        this.props.getCharts(this.props.server.ServerID);
+        this.props.getRigs(this.props.server.ServerID);
+    };
 
     edit = async (ids) => {
 		await this.props.getGConfig(ids);
@@ -109,6 +128,16 @@ export default class extends Component
 		return !i;
     };
 
+	deleteDisabled = (tableProps) => {
+		if (tableProps.selectedColumns.length === 0) {
+            this.deleteDis = true;
+            return true;
+        }
+
+        this.deleteDis = false;
+		return false;
+    };
+
     editCancel() {
         this.setState({ editMode: false });
         this.props.getCharts(this.props.server.ServerID);
@@ -126,8 +155,9 @@ export default class extends Component
 						footer={(props) =>
 								(
 									<div style={{ display: 'flex' }}>
-										<Button disabled={this.editDisabled(props)} type="primary" onClick={() => this.edit(props.selectedColumns)}>Редактировать</Button>
+										<Button disabled={this.editDisabled(props)} type="primary" onClick={() => this.edit(props.selectedColumns)}>{Translate('Редактировать')}</Button>
 										<Button disabled={this.rebootDisabled(props)} type="warning" onClick={() => this.reboot(props.selectedColumns)}>Перезагрузить</Button>
+										<Button disabled={this.deleteDisabled(props)} type="warning" onClick={() => this.deleteH(props.selectedColumns)}>Удалить</Button>
 									</div>
 								)
 						}
