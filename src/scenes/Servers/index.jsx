@@ -277,7 +277,8 @@ export default class extends Component
                                             sorter: true, compare: (a, b) => a.ServerName.localeCompare(b.ServerName),
                                             render: (value, record) => (
                                                 <div>
-                                                 <Button onClick={() => this.props.history.push(`/rigs/${record.ServerID}`)}>{ value } <Tag2 type="hidden">({ record.RigsTotal })</Tag2></Button>   
+                                                    <Button onClick={() => {{global.ServerID = record.ServerID} 
+                                                    this.props.history.push(`/rigs/${record.ServerID}`)}}>{ value } <Tag2 type="hidden">({ record.RigsTotal })</Tag2></Button>   
                                                  </div>
                                             )
 
