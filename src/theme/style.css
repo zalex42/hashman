@@ -1,0 +1,155 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  text-transform: uppercase !important;
+  font-weight: 300 !important;
+}
+
+body {
+  font-family: 'Roboto', Arial, sans-serif;
+  line-height: 1;
+  overflow-x: hidden;
+}
+
+button, select, textarea, input {
+  font-family: 'Roboto', Arial, sans-serif;
+  outline: none;
+}
+
+
+button, input[type=submit] {
+  cursor: pointer;
+}
+
+main {
+  overflow-x: hidden;
+}
+
+.instruction {
+  line-height: 1.5;
+}
+
+.instruction * {
+  text-transform: none !important;
+}
+
+ol.styled-ol li:last-child {
+  border-bottom:none;
+}
+
+ol.styled-ol {
+  list-style-type: none;
+  margin-left: 15px;
+  margin-bottom: 15px;
+  counter-reset: li-counter;
+}
+
+ol.styled-ol li {
+  border-bottom:1px solid #b5b5b5;
+  padding:10px 0 12px 0;
+}
+
+ol.styled-ol li:before {
+  font-size: 18px;
+  font-weight: 400;
+  color: #b5b5b5;
+  margin:0 15px 0 0;
+  content: counter(li-counter);
+  counter-increment: li-counter;
+}
+
+.fw-5 {
+  font-weight: 500 !important;
+}
+
+.fs-15-px {
+  font-size: 15px;
+}
+
+.fs-10-px {
+  font-size: 10px;
+}
+
+.t-i-25px {
+  text-indent: 25px;
+}
+
+.color-default {
+  color: white !important;
+  background-color: #595959 !important;
+}
+
+.color-defaultBl {
+  color: white !important;
+  background-color: #000 !important;
+}
+
+.color-primary {
+  color: white !important;
+  background-color: #89a8ff !important;
+}
+
+.color-success {
+  color: white !important;
+  background-color: #9dd089 !important;
+}
+
+.color-warning {
+  color: white !important;
+  background-color: #ffa31b !important;
+}
+
+.color-error {
+  color: white !important;
+  background-color: #ff6c41 !important;
+}
+
+.color-error-text {
+  color: #ff6c41 !important;
+}
+
+.color-hidden {
+  color: white !important;
+  background-color: #a8a8a8 !important;
+}
+
+.toast-container {
+  font-size: 13px;
+}
+
+.tab-server {
+  color: black;
+  background: #e2e1e1;
+  border: 1px solid transparent;
+  margin-right: 5px;
+}
+
+.tab-server:hover {
+  color: black;
+  background: #efeeee;
+  border-color:#efeeee;
+}
+
+.active-tab-server {
+  background: #595959;
+  margin-right: 5px;
+}
+
+.active-tab-server:hover {
+  background: #666;
+  border-color: #666;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
