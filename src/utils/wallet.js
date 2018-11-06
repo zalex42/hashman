@@ -1,0 +1,1 @@
+export default (value) => parseFloat(value).toFixed(2) + ' $';

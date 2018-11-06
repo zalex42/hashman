@@ -1,0 +1,1 @@
+export default (temperature) => `${temperature} °C`;
