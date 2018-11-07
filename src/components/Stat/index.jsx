@@ -5,8 +5,32 @@ import Tabs from '~/components/Tabs';
 import Button from "~/components/Button";
 import { Toggle } from "~/components/Form";
 
-import { Container, Content, Item, Title, Text, Buttons, Check, Error, Different, Default, Input, Select, Textarea, EnabledBlock, EnabledLabel } from './styles';
+import { Container, Content, Item, Title, Text, Buttons, Check, Error, Different, Default, Input, Select, Textarea, EnabledBlock, EnabledLabel, TextTooltip } from './styles';
+//import {Image} from 'react-native';
+//import {Icon } from 'native-base';
 
+import {Tooltip} from '~/components/react-lightweight-tooltip';
+//import Icon from 'react-native-vector-icons/dist/FontAwesome';
+import CheckIcon from 'react-icons/lib/fa/info-circle';
+import CircleIcon from 'react-icons/lib/fa/circle';
+
+const greenRoundedStyle = {
+  content: {
+    backgroundColor: 'white',
+		color: '#000',
+		display: '10',
+		fontSize: '.8em',
+
+	},
+  tooltip: {
+    position: 'absolute',
+    backgroundColor: 'green',
+    borderRadius: '10px',
+    marginBottom: '0px',
+	},
+
+
+};
 
 export default class extends Component {
 	static defaultProps = {
@@ -58,9 +82,23 @@ export default class extends Component {
 			case 'bool': return <Toggle changed={item.edited} checked={item.Value} onChange={() => this.changeItem(item, rootItem, index, !item.Value)} />;
 			case 'text': return <Input changed={item.edited} type="text" value={item.Value || ''} placeholder={item.DefaultValue} onChange={(e) => this.changeItem(item, rootItem, index, e.target.value)} />;
 			case 'int': return <Input changed={item.edited} type="number" value={item.Value || ''} placeholder={item.DefaultValue} min={item.MinValue} max={item.MaxValue} step={item.StepValue} onChange={(e) => this.changeItem(item, rootItem, index, e.target.value)} />;
-			case 'textarea': return <Textarea placeholder={item.DefaultValue} onChange={(e) => this.changeItem(item, rootItem, index, e.target.value)}>{item.Value || ''}</Textarea>;
+			case 'textarea': return <Textarea  placeholder={item.DefaultValue} onChange={(e) => this.changeItem(item, rootItem, index, e.target.value)}>{item.Value || ''}</Textarea>;
 			case 'select': return <Select value={item.Value} onChange={(e) => this.changeItem(item, rootItem, index, e.target.value)}><option value={false}>---</option>{Object.keys(item.SelectParams).map((param, paramIndex) => <option key={paramIndex} value={param}>{item.SelectParams[param]}</option>)}</Select>;
 			default: return <div>---</div>;
+		}
+	};
+
+	renderEditCurrentValue = (item, rootItem, index) => {
+	
+		if (this.props.alwaysEditMode2 == "true") {
+			switch (item.Type) {
+			case 'bool': return item.currentValue ? <CircleIcon color = "green" size = "30" /> : <CircleIcon color = "red" size = "30" />;
+			case 'text': return <div> {item.currentValue} </div>; 
+			case 'int': return <div> {item.currentValue}</div>; 
+//			case 'textarea': return <Textarea  placeholder={item.DefaultValue} onChange={(e) => this.changeItem(item, rootItem, index, e.target.value)}>{item.Value || ''}</Textarea>;
+//			case 'select': return <Select value={item.currentValue} onChange={(e) => this.changeItem(item, rootItem, index, e.target.value)}><option value={false}>---</option>{Object.keys(item.SelectParams).map((param, paramIndex) => <option key={paramIndex} value={param}>{item.SelectParams[param]}</option>)}</Select>;
+			default: return <div>---</div>;
+			}
 		}
 	};
 
@@ -128,11 +166,12 @@ export default class extends Component {
 		}
 
 		this.setState({
-			editMode: !this.state.editMode || this.props.alwaysEditMode
+			editMode: !this.state.editMode || this.props.alwaysEditMode || this.props.alwaysEditMode2
 		});
-
-		if (cancel) {
-			this.props.onCancel();
+		if (this.props.alwaysEditMode2 == null) {
+			if (cancel) {
+				this.props.onCancel();
+			}
 		}
 	}
 
@@ -168,6 +207,7 @@ export default class extends Component {
 		const group = this.state.editMode && !this.state.renderProps || this.props.alwaysEditMode
 			? this.state.tempCopyItems ? this.state.tempCopyItems : this.props.items
 			: this.props.items;
+			
 
 		_.map(Object.keys(group), (item, index) =>
 			items.push({
@@ -177,20 +217,54 @@ export default class extends Component {
 					{_.map(group[item], (subitem, subindex) =>
 						(!subitem.Miners || subitem.Miners === null || subitem.Miners.includes(group['Майнинг'].filter(item => item.Name === 'RUN')[0].Value))
 							?	// (!subitem.Coins || subitem.Coins.includes(group['Майнинг'].filter(item => item.Name === 'COIN')[0].Value)) ?
+
 							<Item key={subindex}>
 								<Title>{subitem.Description}</Title>
 								{
 									this.state.editMode
 										?
-										<div style={{ display: 'flex', alignItems: 'center' }}>
-											{
-												this.renderEdit(subitem, item, subindex)
-											}
+										<div style={{ display: 'flex', alignItems: 'center'}}>
+											{this.renderEdit(subitem, item, subindex)}
+											{this.renderEditCurrentValue(subitem, item, subindex)}
+
+											{<Tooltip 
+																content = {
+																	<TextTooltip>
+																								{
+																									subitem.Hint
+																								} 
+																							</TextTooltip>
+																}
+																styles={greenRoundedStyle}
+												>
+											<CheckIcon />
+											</Tooltip>}
+
 											{
 												this.renderEnabled(subitem, item, subindex)
 											}
+											
 											<Default onClick={() => this.setDefault(subitem, item, subindex)} title="Вернуть значение" />
+											
 										</div>
+									
+									
+										:
+										
+										!(subitem.isEnabled) & (item=="Разгон" || item=="Основные" || item=="Майнинг")
+										?
+										<Text style= {{textDecoration: "line-through", color: "gainsboro"}}>
+											{
+												subitem.Type === 'select'
+													? subitem.SelectParams[subitem.Value]
+													: subitem.Type === 'bool'
+														? subitem.Value
+															? <Check />
+															: <Error />
+														: subitem.Value || '---'
+											
+											} 
+										</Text>
 										:
 										<Text>
 											{
@@ -201,13 +275,14 @@ export default class extends Component {
 															? <Check />
 															: <Error />
 														: subitem.Value || '---'
-											}
+											
+											} 
 										</Text>
 								}
 								{subitem.isDifferent ? <Different>Настройки отличаются</Different> : null}
 							</Item>
 							// : null
-							: null)
+			: null)
 					}
 					{
 						!this.props.editable
@@ -241,7 +316,7 @@ export default class extends Component {
 
 	render() {
 		return (
-			<Container>
+		<Container>
 				<Tabs items={this.getItems()} {...this.props.tabsSett} />
 			</Container>
 		);

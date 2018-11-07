@@ -99,14 +99,21 @@ export const Item = styled.div`
 
 export const Title = styled.h3`
   margin-bottom: 5px;
-
   font-size: ${ rem('13px') };
   font-weight: 500 !important;
+  text-transform: uppercase !important;
   color: ${ props => props.theme.stat.title };
 `;
 
 export const Text = styled.div`
   font-size: ${ rem('17px') };
+  font-weight: 600 !important;
+  text-transform: none !important;
+  color: ${ props => props.theme.stat.text };
+`;
+
+export const TextTooltip = styled.div`
+  font-size: ${ rem('13px') };
   font-weight: 600 !important;
   text-transform: none !important;
   color: ${ props => props.theme.stat.text };
