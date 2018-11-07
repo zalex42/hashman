@@ -21,7 +21,9 @@ const initialState = {
         loading: false
     },
     entities: [],
-    charts: {}
+    gconfig: {},
+    charts: {},
+	config: true
 };
 
 const reducer = createReducer({
@@ -30,6 +32,8 @@ const reducer = createReducer({
     [actions.serversFailed]: (state, payload) => ({ ...state, error: { ...state.error, code: payload.code, message: payload.message } }),
     [actions.serversSuccessed]: (state, payload) => ({ ...state, entities: payload }),
     [actions.serversCharts]: (state, payload) => ({ ...state, charts: payload }),
+    [actions.CoolFanGConfig]: (state, payload) => ({ ...state, gconfig: payload }),
+    [actions.CoolFanConfig]: (state, payload) => ({ ...state, config: payload }),
 }, initialState);
 
 export default reducer;
