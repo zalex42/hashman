@@ -77,6 +77,27 @@ export const reboot = (ids) => async (dispatch) => {
     }
 };
 
+export const deleteH = (ids) => async (dispatch) => {
+    try
+    {
+        dispatch(rigsRequested());
+
+        const { data }: { data: IResult } = await api.post(`/api/react/delete`, { rigs: ids });
+
+		if (data.ErrorCode < 0)
+			dispatch(rigsConfig(data.ErrorString));
+		else rigsConfig(true);
+    }
+    catch (e)
+    {
+		dispatch(rigsConfig(e));
+    }
+    finally
+    {
+        dispatch(rigsReceived());
+    }
+};
+
 export const edit = (ids, result) => async (dispatch) => {
     try
     {

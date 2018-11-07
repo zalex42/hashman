@@ -26,6 +26,7 @@ import getClrChartTemper from '~/utils/getClrChartTemper';
 import theme from '~/theme';
 
 
+
 const TooltipStability = (props) => (
     <ToolTip.Container>
         { props.payload && props.payload.length && props.payload.length > 0 ? (
@@ -76,7 +77,8 @@ export default class extends Component
     {
         this.props.getServers().then(() => {
             this.setState({
-                currServId: this.props.servers.entities[0].ServerID
+                currServId: global.ServerID
+                //currServId: this.props.servers.entities.ServerID
             })
         });
         this.setState({ update: setInterval(() => {
@@ -146,6 +148,7 @@ export default class extends Component
         this.setState({
             currServId: ind
         });
+        this.props.history.push(`/rigs/${ind}`);
     }
 
     render()
