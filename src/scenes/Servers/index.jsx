@@ -15,7 +15,7 @@ import theme from '~/theme';
 import LoaderContainer from '~/components/Loader';
 import Title from '~/components/Title';
 import Paper from '~/components/Paper';
-import { Table } from '~/components/Table';
+import { Table } from '~/components/Table2';
 import Tag, { Group } from '~/components/Tag';
 import Tag2 from '~/components/Tag2';
 import Tabs from '~/components/Tabs';
@@ -275,11 +275,11 @@ export default class extends Component
                                             label: 'Сервер',
                                             index: 'ServerName',
                                             sorter: true, compare: (a, b) => a.ServerName.localeCompare(b.ServerName),
-                                            render: (value, record) => (
-                                                <div>
-                                                    <Button onClick={() => {{global.ServerID = record.ServerID} 
-                                                    this.props.history.push(`/rigs/${record.ServerID}`)}}>{ value } <Tag2 type="hidden">({ record.RigsTotal })</Tag2></Button>   
-                                                 </div>
+                                            render: (value, record) => 
+                                            ( 
+                                              <div>
+                                                { value } <Tag type="hidden">({ record.RigsTotal })</Tag>
+                                                </div>
                                             )
 
                                         },
@@ -302,10 +302,16 @@ export default class extends Component
                                             label: 'Вентиляция',
                                             index: 'CoolFan',
                                             render: (value, record) => 
-                                            (<div style={{ display: 'flex' }}>
-
-                                                <Button onClick={() => this.editCoolFan(record.ServerID)}> {value < 0 ? '---' : <Tag>{ `${value} %` }</Tag>}</Button>
-                                                </div>)
+                                            ( 
+                                                <div>
+                                                  {value < 0 ? '---' : <Tag>{ `${value} %` }</Tag>}
+                                                  </div>
+                                              )
+  
+//                                            (<div style={{ display: 'flex' }}>
+//
+  //                                              <Button onClick={() => this.editCoolFan(record.ServerID)}> {value < 0 ? '---' : <Tag>{ `${value} %` }</Tag>}</Button>
+    //                                            </div>)
                                                 
                                              //value < 0 ? '---' : <Tag>{ `${value} %` }</Tag>
 //                                            render: (value, record) => value < 0 ? <a href={`/vent/${record.ServerID}`} > --- </a> : <a href={`/vent/${record.ServerID}`} > <Tag>{ `${value} %` }</Tag> </a> 
@@ -338,7 +344,8 @@ export default class extends Component
                                         },
                                     ]}
                                     dataSource={servers.entities}
-//                                    onRowClick={(record) => { !this.state.presseditCoolFan ? this.props.history.push(`/rigs/${record.ServerID}`) : null }}
+                                    onRowClick={(record) => { this.props.history.push(`/rigs/${record.ServerID}`) }}
+                                    onRowClickFan={(record) => { this.editCoolFan(record.ServerID) }}
 //                                    onRow={(record) => { this.state.currRow === record.index }}
                                     />
                                 : null
