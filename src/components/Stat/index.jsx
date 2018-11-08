@@ -216,7 +216,7 @@ export default class extends Component {
 				content: <Content {...this.props.wrapperSett}>
 					{_.map(group[item], (subitem, subindex) =>
 						(!subitem.Miners || subitem.Miners === null || subitem.Miners.includes(group['Майнинг'].filter(item => item.Name === 'RUN')[0].Value))
-							?	// (!subitem.Coins || subitem.Coins.includes(group['Майнинг'].filter(item => item.Name === 'COIN')[0].Value)) ?
+							?	 (!subitem.Coins || subitem.Coins.includes(group['Майнинг'].filter(item => item.Name === 'COIN')[0].Value)) ?
 
 							<Item key={subindex}>
 								<Title>{subitem.Description}</Title>
@@ -281,7 +281,7 @@ export default class extends Component {
 								}
 								{subitem.isDifferent ? <Different>Настройки отличаются</Different> : null}
 							</Item>
-							// : null
+							 : null
 			: null)
 					}
 					{
