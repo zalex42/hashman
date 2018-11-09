@@ -59,7 +59,14 @@ export default class extends Component {
 		if (this.state.editMode && !this.props.alwaysEditMode) {
 			this.startEdit();
 		}
+		global.disableAutoRefresh = true;
 	}
+
+	componentWillUnmount()
+	{
+			clearInterval(this.state.update);
+			global.disableAutoRefresh = false;
+		}
 
 	componentDidUpdate(prevProps) {
 		if (Object.keys(prevProps.items).length === 0 
