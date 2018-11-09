@@ -92,9 +92,10 @@ export default class extends Component {
 	
 		if (this.props.alwaysEditMode2 == "true") {
 			switch (item.Type) {
-			case 'bool': return item.currentValue ? <CircleIcon color = "green" size = "30" /> : <CircleIcon color = "red" size = "30" />;
-			case 'text': return <div> {item.currentValue} </div>; 
-			case 'int': return <div> {item.currentValue}</div>; 
+//			case 'bool': return item.currentValue ? <CircleIcon color = "green" size = "30" /> : <CircleIcon color = "red" size = "30" />;
+			case 'bool': return <div style={{ display: 'inline-block', alignItems: "center", textAlign: "right", marginLeft: "auto"}}> {item.currentValue ? <CircleIcon color = "green" size = "30" /> : <CircleIcon color = "red" size = "30" />}</div>;
+			case 'text': return <div style={{ display: 'inline-block', alignItems: "center", textAlign: "right", marginLeft: "auto"}}> {item.currentValue} </div>; 
+			case 'int': return <div style={{ display: 'inline-block', alignItems: "center", textAlign: "right", marginLeft: "auto"}}> {item.currentValue}</div>; 
 //			case 'textarea': return <Textarea  placeholder={item.DefaultValue} onChange={(e) => this.changeItem(item, rootItem, index, e.target.value)}>{item.Value || ''}</Textarea>;
 //			case 'select': return <Select value={item.currentValue} onChange={(e) => this.changeItem(item, rootItem, index, e.target.value)}><option value={false}>---</option>{Object.keys(item.SelectParams).map((param, paramIndex) => <option key={paramIndex} value={param}>{item.SelectParams[param]}</option>)}</Select>;
 			default: return <div>---</div>;
@@ -224,28 +225,28 @@ export default class extends Component {
 									this.state.editMode
 										?
 										<div style={{ display: 'flex', alignItems: 'center'}}>
-											{this.renderEdit(subitem, item, subindex)}
-											{this.renderEditCurrentValue(subitem, item, subindex)}
+												{this.renderEdit(subitem, item, subindex)}
 
-											{<Tooltip 
-																content = {
-																	<TextTooltip>
-																								{
-																									subitem.Hint
-																								} 
-																							</TextTooltip>
-																}
-																styles={greenRoundedStyle}
-												>
-											<CheckIcon />
-											</Tooltip>}
+													{<Tooltip 
+																		content = {
+																			<TextTooltip>
+																										{
+																											subitem.Hint
+																										} 
+																									</TextTooltip>
+																		}
+																		styles={greenRoundedStyle}
+														>
+													<CheckIcon />
+													</Tooltip>}
 
-											{
-												this.renderEnabled(subitem, item, subindex)
-											}
-											
-											<Default onClick={() => this.setDefault(subitem, item, subindex)} title="Вернуть значение" />
-											
+													{
+														this.renderEnabled(subitem, item, subindex)
+													}
+
+													<Default onClick={() => this.setDefault(subitem, item, subindex)} title="Вернуть значение" />
+													{this.renderEditCurrentValue(subitem, item, subindex)}
+
 										</div>
 									
 									
