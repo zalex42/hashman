@@ -77,6 +77,7 @@ export default class extends Component
 		showCharts: true,
 		iseditCoolFan: false,
 		id: null,
+		ServerName: null,
         presseditCoolFan: false,
         currRow: null
     };
@@ -191,6 +192,12 @@ export default class extends Component
 
     editCoolFanCancel() {
         this.setState({ iseditCoolFan: false });
+        if (this.props.auth.entities.authorized) {
+            this.setState({ update: setInterval(() => {
+                this.props.getServers();
+                this.props.getCharts();
+            }, 5000) });
+        }
 //        this.setState({ presseditCoolFan: false });
     }
 
@@ -198,6 +205,11 @@ export default class extends Component
      //   this.setState({ presseditCoolFan: true });
 		await this.props.getCoolFanConfig(id);
 		this.openeditCoolFan(id);
+        if (this.props.auth.entities.authorized) {
+            this.setState({ update: setInterval(() => {
+                this.props.getCoolFanConfig(id);
+            }, 5000) });
+        }
 	};
 
     openeditCoolFan = (id) => {
@@ -345,14 +357,15 @@ export default class extends Component
                                     ]}
                                     dataSource={servers.entities}
                                     onRowClick={(record) => { this.props.history.push(`/rigs/${record.ServerID}`) }}
-                                    onRowClickFan={(record) => { this.editCoolFan(record.ServerID) }}
+                                    onRowClickFan={(record) => { {this.state.ServerName = record.ServerName} this.editCoolFan(record.ServerID) }}
 //                                    onRow={(record) => { this.state.currRow === record.index }}
                                     />
                                 : null
                         }
                         { this.state.iseditCoolFan 
                                 ? <Modal unMount={() => this.editCoolFanCancel()} 
-                                        loading={this.props.servers.pending.loading}><CoolFan 
+                                        title = {"Параметры вентиляции: "+this.state.ServerName}
+                                        loading={false}><CoolFan 
                                         editMode 
 //                                        canReboot="false" 
                                         canEdit="true" 
