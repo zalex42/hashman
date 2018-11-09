@@ -356,7 +356,7 @@ export default class extends Component
                                         },
                                     ]}
                                     dataSource={servers.entities}
-                                    onRowClick={(record) => { this.props.history.push(`/rigs/${record.ServerID}`) }}
+                                    onRowClick={(record) => { {global.ServerID = record.ServerID} this.props.history.push(`/rigs/${record.ServerID}`) }}
                                     onRowClickFan={(record) => { {this.state.ServerName = record.ServerName} this.editCoolFan(record.ServerID) }}
 //                                    onRow={(record) => { this.state.currRow === record.index }}
                                     />
