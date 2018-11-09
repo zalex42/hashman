@@ -192,6 +192,7 @@ export default class extends Component
 
     editCoolFanCancel() {
         this.setState({ iseditCoolFan: false });
+        clearInterval(this.state.update);
         if (this.props.auth.entities.authorized) {
             this.setState({ update: setInterval(() => {
                 this.props.getServers();
