@@ -206,6 +206,7 @@ export default class extends Component
      //   this.setState({ presseditCoolFan: true });
 		await this.props.getCoolFanConfig(id);
 		this.openeditCoolFan(id);
+        clearInterval(this.state.update);
         if (this.props.auth.entities.authorized) {
             this.setState({ update: setInterval(() => {
                 this.props.getCoolFanConfig(id);
