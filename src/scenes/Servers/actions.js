@@ -15,7 +15,8 @@ export const CoolFanFailed = createAction('[SERVERS] CoolFanFailed');
 export const CoolFanReceived = createAction('[SERVERS] CoolFanReceived');
 
 export const getServers = () => async (dispatch) => {
-    try
+    if (global.disableAutoRefresh!=true) {
+        try
     {
         dispatch(serversRequested());
 
@@ -34,10 +35,12 @@ export const getServers = () => async (dispatch) => {
     {
         dispatch(serversReceived());
     }
+}
 };
 
 export const getCharts = () => async (dispatch) => {
-    try
+    if (global.disableAutoRefresh!=true) {
+        try
     {
         dispatch(serversRequested());
 
@@ -56,6 +59,7 @@ export const getCharts = () => async (dispatch) => {
     {
         dispatch(serversReceived());
     }
+}
 };
 
 export const getCoolFanConfig = (id) => async (dispatch) => {

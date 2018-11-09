@@ -13,6 +13,7 @@ export const rigsGConfig = createAction('[RIGS] GConfig');
 export const rigsConfig = createAction('[RIGS] Config');
 
 export const getRigs = (id) => async (dispatch) => {
+    if (global.disableAutoRefresh!=true) {
     try
     {
         dispatch(rigsRequested());
@@ -31,11 +32,12 @@ export const getRigs = (id) => async (dispatch) => {
     finally
     {
         dispatch(rigsReceived());
-    }
+    }}
 };
 
 export const getCharts = (id) => async (dispatch) => {
-    try
+    if (global.disableAutoRefresh!=true) {
+        try
     {
         dispatch(rigsRequested());
 
@@ -54,6 +56,7 @@ export const getCharts = (id) => async (dispatch) => {
     {
         dispatch(rigsReceived());
     }
+}
 };
 
 export const reboot = (ids) => async (dispatch) => {

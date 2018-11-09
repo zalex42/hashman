@@ -98,6 +98,7 @@ export default class extends Component
     }
 
     getItems = () => {
+    //    clearInterval(this.state.update);
         return this.props.servers.entities.map((server) => ({
             label: renderHTML(`
                 <div>${server.ServerName}</div>
