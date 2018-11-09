@@ -15,7 +15,7 @@ import theme from '~/theme';
 import LoaderContainer from '~/components/Loader';
 import Title from '~/components/Title';
 import Paper from '~/components/Paper';
-import { Table } from '~/components/Table';
+import { Table } from '~/components/Table2';
 import Tag, { Group } from '~/components/Tag';
 import Tag2 from '~/components/Tag2';
 import Tabs from '~/components/Tabs';
@@ -77,6 +77,7 @@ export default class extends Component
 		showCharts: true,
 		iseditCoolFan: false,
 		id: null,
+		ServerName: null,
         presseditCoolFan: false,
         currRow: null
     };
@@ -85,14 +86,14 @@ export default class extends Component
     async componentDidMount()
     {
         this.props.getServers();
-        await this.props.getCharts();
+        await this.props.getCharts(true);
 
         if (this.props.servers.error.message === 'NOT DATA') this.setState({ showCharts: false });
 
         if (this.props.auth.entities.authorized) {
             this.setState({ update: setInterval(() => {
                 this.props.getServers();
-                this.props.getCharts();
+                this.props.getCharts(false);
             }, 5000) });
         }
     }
@@ -191,6 +192,13 @@ export default class extends Component
 
     editCoolFanCancel() {
         this.setState({ iseditCoolFan: false });
+        clearInterval(this.state.update);
+        if (this.props.auth.entities.authorized) {
+            this.setState({ update: setInterval(() => {
+                this.props.getServers();
+                this.props.getCharts(false);
+            }, 5000) });
+        }
 //        this.setState({ presseditCoolFan: false });
     }
 
@@ -198,6 +206,12 @@ export default class extends Component
      //   this.setState({ presseditCoolFan: true });
 		await this.props.getCoolFanConfig(id);
 		this.openeditCoolFan(id);
+        clearInterval(this.state.update);
+        if (this.props.auth.entities.authorized) {
+            this.setState({ update: setInterval(() => {
+                this.props.getCoolFanConfig(id);
+            }, 5000) });
+        }
 	};
 
     openeditCoolFan = (id) => {
@@ -275,11 +289,11 @@ export default class extends Component
                                             label: 'Сервер',
                                             index: 'ServerName',
                                             sorter: true, compare: (a, b) => a.ServerName.localeCompare(b.ServerName),
-                                            render: (value, record) => (
-                                                <div>
-                                                    <Button onClick={() => {{global.ServerID = record.ServerID} 
-                                                    this.props.history.push(`/rigs/${record.ServerID}`)}}>{ value } <Tag2 type="hidden">({ record.RigsTotal })</Tag2></Button>   
-                                                 </div>
+                                            render: (value, record) => 
+                                            ( 
+                                              <div>
+                                                { value } <Tag type="hidden">({ record.RigsTotal })</Tag>
+                                                </div>
                                             )
 
                                         },
@@ -302,10 +316,16 @@ export default class extends Component
                                             label: 'Вентиляция',
                                             index: 'CoolFan',
                                             render: (value, record) => 
-                                            (<div style={{ display: 'flex' }}>
-
-                                                <Button onClick={() => this.editCoolFan(record.ServerID)}> {value < 0 ? '---' : <Tag>{ `${value} %` }</Tag>}</Button>
-                                                </div>)
+                                            ( 
+                                                <div>
+                                                  {value < 0 ? '---' : <Tag>{ `${value} %` }</Tag>}
+                                                  </div>
+                                              )
+  
+//                                            (<div style={{ display: 'flex' }}>
+//
+  //                                              <Button onClick={() => this.editCoolFan(record.ServerID)}> {value < 0 ? '---' : <Tag>{ `${value} %` }</Tag>}</Button>
+    //                                            </div>)
                                                 
                                              //value < 0 ? '---' : <Tag>{ `${value} %` }</Tag>
 //                                            render: (value, record) => value < 0 ? <a href={`/vent/${record.ServerID}`} > --- </a> : <a href={`/vent/${record.ServerID}`} > <Tag>{ `${value} %` }</Tag> </a> 
@@ -338,14 +358,16 @@ export default class extends Component
                                         },
                                     ]}
                                     dataSource={servers.entities}
-//                                    onRowClick={(record) => { !this.state.presseditCoolFan ? this.props.history.push(`/rigs/${record.ServerID}`) : null }}
+                                    onRowClick={(record) => { {clearInterval(this.state.update)} {global.ServerID = record.ServerID} this.props.history.push(`/rigs/${record.ServerID}`) }}
+                                    onRowClickFan={(record) => { {this.state.ServerName = record.ServerName} this.editCoolFan(record.ServerID) }}
 //                                    onRow={(record) => { this.state.currRow === record.index }}
                                     />
                                 : null
                         }
                         { this.state.iseditCoolFan 
                                 ? <Modal unMount={() => this.editCoolFanCancel()} 
-                                        loading={this.props.servers.pending.loading}><CoolFan 
+                                        title = {"Параметры вентиляции: "+this.state.ServerName}
+                                        loading={false}><CoolFan 
                                         editMode 
 //                                        canReboot="false" 
                                         canEdit="true" 

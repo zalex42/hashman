@@ -85,7 +85,7 @@ export default class extends Component
             this.props.getServers();
             if (this.state.currServId) {
                 this.props.getRigs(this.state.currServId);
-                this.props.getCharts(this.state.currServId);
+                this.props.getCharts2(this.state.currServId);
             }
         }, 5000) });
     }
@@ -98,6 +98,7 @@ export default class extends Component
     }
 
     getItems = () => {
+    //    clearInterval(this.state.update);
         return this.props.servers.entities.map((server) => ({
             label: renderHTML(`
                 <div>${server.ServerName}</div>

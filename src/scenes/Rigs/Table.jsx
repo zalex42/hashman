@@ -90,6 +90,7 @@ export default class extends Component
 	};
 
 	getSettings = () => {
+//        clearInterval(this.props.state.update);
 		const group = {};
 		_.map(this.props.rigs.gconfig, (item) => {
 			if (!group[item.Group]) group[item.Group] = [];
