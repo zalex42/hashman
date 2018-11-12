@@ -81,11 +81,15 @@ export default class extends Component
                 //currServId: this.props.servers.entities.ServerID
             })
         });
-        this.setState({ update: setInterval(() => {
+    //    if (this.state.currServId) {
+      //      this.props.getRigs(this.state.currServId);
+        //    this.props.getCharts2(this.state.currServId, true);
+        //}
+    this.setState({ update: setInterval(() => {
             this.props.getServers();
             if (this.state.currServId) {
                 this.props.getRigs(this.state.currServId);
-                this.props.getCharts(this.state.currServId);
+                this.props.getCharts2(this.state.currServId, false);
             }
         }, 5000) });
     }

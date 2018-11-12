@@ -72,6 +72,7 @@ const TooltipHashrate = (props) => (
 
 @hot(module)
 @connect((state) => ({
+	
     rig: state.rig,
 	rigs: state.rigs
 }), { ...actions, ...rigsActions })
@@ -86,10 +87,11 @@ export default class extends Component
 
     async componentDidMount()
     {
+		
         await this.props.getRig(this.props.match.params.id);
 		await this.props.getEvents(this.props.match.params.id);
-        await this.props.getChartsRig(this.props.match.params.id);
-
+        await this.props.getChartsRig(this.props.match.params.id, true);
+		
 		if (this.props.rig.error.message === 'NOT DATA') {
 			this.setState({ showCharts: false });
 		}
@@ -97,9 +99,11 @@ export default class extends Component
 		this.setState({
 			settGr: this.getSettings(),
 			update: setInterval(() => {
+				
 				this.props.getRig(this.props.match.params.id);
 				this.props.getEvents(this.props.match.params.id);
-				this.props.getChartsRig(this.props.match.params.id);
+				this.props.getChartsRig(this.props.match.params.id, false);
+				
 			}, 5000) 
 		});
     }
@@ -271,13 +275,15 @@ export default class extends Component
 
     render()
     {
+		
         const { rig } = this.props;
         const { entities } = rig;
         const time = entities.IsOnline ? moment.duration(entities.Uptime, 'seconds') : moment.duration(entities.downtime, 'seconds');
 
         return (
             <div>
-				<Title right={<Settings rig={entities} reboot={this.reboot} />} subtitle={entities.rigHash}>Рига: {entities.Name}</Title>
+				<Title right={<Settings rig={entities} reboot={this.reboot} />} subtitle={entities.rigHash}> <a href={"/rigs/"+entities.ServerID} > {entities.ServerName} </a> {entities.Name}</Title>
+				
 				{this.state.showCharts ? <Row>
 					<Col xs={12} md={6} lg={3}>
 						<Paper title="Стабильность"
@@ -319,7 +325,7 @@ export default class extends Component
 						</Paper>
 					</Col>
 					<Col xs={12} md={6} lg={3}>
-						<EventInformer items={rig.charts.Events} onCloseModal={() => { this.props.getChartsRig(this.props.match.params.id) }}></EventInformer>
+						<EventInformer items={rig.charts.Events} onCloseModal={() => { this.props.getChartsRig(this.props.match.params.id, false) }}></EventInformer>
 					</Col>
 				</Row>
 					: null }

@@ -31,6 +31,7 @@ const reducer = createReducer({
     [actions.rigFailed]: (state, payload) => ({ ...state, error: { ...state.error, code: payload.code, message: payload.message } }),
     [actions.rigSuccessed]: (state, payload) => ({ ...state, entities: payload }),
     [actions.rigCharts]: (state, payload) => ({ ...state, charts: payload }),
+    [actions.rigChartsUpdate]: (state, payload) => ({ ...state, charts: {...state.charts, Events: payload.Events, currentHashrate: payload.currentHashrate, currentTemperatures: payload.currentTemperatures }}),
     [actions.rigEvents]: (state, payload) => ({ ...state, events: payload }),
     [actions.rigClear]: () => initialState,
 }, initialState);

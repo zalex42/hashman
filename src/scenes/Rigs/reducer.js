@@ -32,6 +32,7 @@ const reducer = createReducer({
     [actions.rigsFailed]: (state, payload) => ({ ...state, error: { ...state.error, code: payload.code, message: payload.message } }),
     [actions.rigsSuccessed]: (state, payload) => ({ ...state, entities: payload }),
     [actions.rigsCharts]: (state, payload) => ({ ...state, charts: payload }),
+    [actions.rigsChartsUpdate]: (state, payload) => ({ ...state, charts: {...state.charts, Events: payload.Events, currentHashrate: payload.currentHashrate, currentTemperatures: payload.currentTemperatures }}),
     [actions.rigsGConfig]: (state, payload) => ({ ...state, gconfig: payload }),
     [actions.rigsConfig]: (state, payload) => ({ ...state, config: payload }),
     [actions.rigsClear]: () => initialState,

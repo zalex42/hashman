@@ -8,6 +8,7 @@ export const serversReceived = createAction('[SERVERS] Received');
 export const serversFailed = createAction('[SERVERS] Failed');
 export const serversSuccessed = createAction('[SERVERS] Successed');
 export const serversCharts = createAction('[SERVERS] Charts');
+export const serversChartsUpdate = createAction('[SERVERS] ChartsUpdate');
 export const CoolFanRequested = createAction('[SERVERS] CoolFanRequested');
 export const CoolFanGConfig = createAction('[SERVERS] CoolFanGConfig');
 export const CoolFanConfig = createAction('[SERVERS] CoolFanConfig');
@@ -38,18 +39,22 @@ export const getServers = () => async (dispatch) => {
 }
 };
 
-export const getCharts = () => async (dispatch) => {
+export const getCharts = (firstLaunch) => async (dispatch) => {
     if (global.disableAutoRefresh!=true) {
         try
     {
         dispatch(serversRequested());
+            const { data }: { data:IResult } = await api.get(`/api/react/infographs${firstLaunch == false ? '?u=1' : ''}`);
 
-        const { data }: { data:IResult } = await api.get('/api/react/infographs');
 
         if (data.ErrorCode < 0)
             dispatch(serversFailed({ code: data.ErrorCode, message: data.ErrorString }));
         else
-            dispatch(serversCharts(data.Data));
+        {firstLaunch == false ?
+            dispatch(serversChartsUpdate(data.Data)):
+            dispatch(serversCharts(data.Data))
+
+        };
     }
     catch (e)
     {
@@ -62,6 +67,33 @@ export const getCharts = () => async (dispatch) => {
 }
 };
 
+export const getCharts2 = (id, firstLaunch) => async (dispatch) => {
+    if (global.disableAutoRefresh!=true) {
+        try
+    {
+        dispatch(serversRequested());
+
+        const { data }: { data:IResult } = await api.get(`/api/react/infographs?s=${id}${firstLaunch == false ? '&u=1' : ''}`);
+
+        if (data.ErrorCode < 0)
+            dispatch(serversFailed({ code: data.ErrorCode, message: data.ErrorString }));
+        else
+        {firstLaunch == false ?
+            dispatch(serversChartsUpdate(data.Data)):
+            dispatch(serversCharts(data.Data))
+
+        };
+    }
+    catch (e)
+    {
+        dispatch(serversFailed({ code: null, message: e }));
+    }
+    finally
+    {
+        dispatch(serversReceived());
+    }
+}
+};
 export const getCoolFanConfig = (id) => async (dispatch) => {
     try
     {

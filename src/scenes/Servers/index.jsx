@@ -86,14 +86,14 @@ export default class extends Component
     async componentDidMount()
     {
         this.props.getServers();
-        await this.props.getCharts();
+        await this.props.getCharts(true);
 
         if (this.props.servers.error.message === 'NOT DATA') this.setState({ showCharts: false });
 
         if (this.props.auth.entities.authorized) {
             this.setState({ update: setInterval(() => {
                 this.props.getServers();
-                this.props.getCharts();
+                this.props.getCharts(false);
             }, 5000) });
         }
     }
@@ -196,7 +196,7 @@ export default class extends Component
         if (this.props.auth.entities.authorized) {
             this.setState({ update: setInterval(() => {
                 this.props.getServers();
-                this.props.getCharts();
+                this.props.getCharts(false);
             }, 5000) });
         }
 //        this.setState({ presseditCoolFan: false });
@@ -240,7 +240,7 @@ export default class extends Component
                             onMouseEnter={(e) => this.setState({ activeChart: 'stability' })} 
                             onMouseLeave={() => this.setState({ activeChart: null })}>
                                 <ResponsiveContainer width="100%" height={110}>
-                                    <BarChart data={servers.charts.Stability}>
+                                   <BarChart data={servers.charts.Stability}>
                                         <Tooltip content={<TooltipStability />} />
                                         <Bar dataKey="uptime" stackId="a" fill={this.state.activeChart === 'stability' ? theme.notifications.success : rgba(theme.notifications.hidden, 0.6)} />
                                         <Bar dataKey="downtime" stackId="a" fill={this.state.activeChart === 'stability' ? theme.notifications.error : theme.notifications.hidden} />
