@@ -80,6 +80,7 @@ export default class extends Component
 {
     state = {
         update: null,
+        update2: null,
 		activeChart: null,
 		showCharts: true,
 		settGr: []
@@ -101,10 +102,14 @@ export default class extends Component
 			update: setInterval(() => {
 				
 				this.props.getRig(this.props.match.params.id);
+				
+			}, 10000), 
+			update2: setInterval(() => {
+				
 				this.props.getEvents(this.props.match.params.id);
 				this.props.getChartsRig(this.props.match.params.id, false);
 				
-			}, 5000) 
+			}, 15000) 
 		});
     }
 
@@ -112,6 +117,7 @@ export default class extends Component
     {
         this.props.rigClear();
         clearInterval(this.state.update);
+        clearInterval(this.state.update2);
     }
 
 	_showMessage = (type, message) => {

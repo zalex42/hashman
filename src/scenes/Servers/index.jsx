@@ -73,6 +73,7 @@ export default class extends Component
 {
     state = {
         update: null,
+        update2: null,
 		activeChart: null,
 		showCharts: true,
 		iseditCoolFan: false,
@@ -93,14 +94,17 @@ export default class extends Component
         if (this.props.auth.entities.authorized) {
             this.setState({ update: setInterval(() => {
                 this.props.getServers();
+            }, 10000) });
+            this.setState({ update2: setInterval(() => {
                 this.props.getCharts(false);
-            }, 5000) });
+            }, 15000) });
         }
     }
 
     componentWillUnmount()
     {
         clearInterval(this.state.update);
+        clearInterval(this.state.update2);
     }
 
     getCoinsValue = () => {
@@ -193,11 +197,14 @@ export default class extends Component
     editCoolFanCancel() {
         this.setState({ iseditCoolFan: false });
         clearInterval(this.state.update);
+        clearInterval(this.state.update2);
         if (this.props.auth.entities.authorized) {
             this.setState({ update: setInterval(() => {
                 this.props.getServers();
+            }, 10000) });
+            this.setState({ update2: setInterval(() => {
                 this.props.getCharts(false);
-            }, 5000) });
+            }, 15000) });
         }
 //        this.setState({ presseditCoolFan: false });
     }
@@ -207,6 +214,7 @@ export default class extends Component
 		await this.props.getCoolFanConfig(id);
 		this.openeditCoolFan(id);
         clearInterval(this.state.update);
+        clearInterval(this.state.update2);
         if (this.props.auth.entities.authorized) {
             this.setState({ update: setInterval(() => {
                 this.props.getCoolFanConfig(id);
@@ -358,7 +366,7 @@ export default class extends Component
                                         },
                                     ]}
                                     dataSource={servers.entities}
-                                    onRowClick={(record) => { {clearInterval(this.state.update)} {global.ServerID = record.ServerID} this.props.history.push(`/rigs/${record.ServerID}`) }}
+                                    onRowClick={(record) => { {clearInterval(this.state.update)} {clearInterval(this.state.update2)} {global.ServerID = record.ServerID} this.props.history.push(`/rigs/${record.ServerID}`) }}
                                     onRowClickFan={(record) => { {this.state.ServerName = record.ServerName} this.editCoolFan(record.ServerID) }}
 //                                    onRow={(record) => { this.state.currRow === record.index }}
                                     />

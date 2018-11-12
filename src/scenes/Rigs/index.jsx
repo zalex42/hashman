@@ -68,6 +68,7 @@ export default class extends Component
 {
     state = {
         update: null,
+        update2: null,
 		activeChart: null,
         showCharts: true,
         currServId: null
@@ -89,9 +90,13 @@ export default class extends Component
             this.props.getServers();
             if (this.state.currServId) {
                 this.props.getRigs(this.state.currServId);
+            }
+        }, 10000) });
+        this.setState({ update2: setInterval(() => {
+            if (this.state.currServId) {
                 this.props.getCharts2(this.state.currServId, false);
             }
-        }, 5000) });
+        }, 15000) });
     }
 
     setShowCharts = () => this.setState({ showCharts: false });
@@ -99,6 +104,7 @@ export default class extends Component
     componentWillUnmount()
     {
         clearInterval(this.state.update);
+        clearInterval(this.state.update2);
     }
 
     getItems = () => {
