@@ -37,6 +37,10 @@ const reducer = createReducer({
     [actions.CoolFanReceived]: (state) => ({ ...state, pending: { ...state.pending, loading: false } }),
     [actions.CoolFanGConfig]: (state, payload) => ({ ...state, gconfig: payload }),
     [actions.CoolFanConfig]: (state, payload) => ({ ...state, config: payload }),
+    [actions.PowerRequested]: (state) => ({ ...state, pending: { ...state.pending, loading: true } }),
+    [actions.PowerReceived]: (state) => ({ ...state, pending: { ...state.pending, loading: false } }),
+    [actions.PowerGConfig]: (state, payload) => ({ ...state, gconfig: payload }),
+    [actions.PowerConfig]: (state, payload) => ({ ...state, config: payload }),
 }, initialState);
 
 export default reducer;

@@ -14,6 +14,11 @@ export const CoolFanGConfig = createAction('[SERVERS] CoolFanGConfig');
 export const CoolFanConfig = createAction('[SERVERS] CoolFanConfig');
 export const CoolFanFailed = createAction('[SERVERS] CoolFanFailed');
 export const CoolFanReceived = createAction('[SERVERS] CoolFanReceived');
+export const PowerRequested = createAction('[SERVERS] PowerRequested');
+export const PowerGConfig = createAction('[SERVERS] PowerGConfig');
+export const PowerConfig = createAction('[SERVERS] PowerConfig');
+export const PowerFailed = createAction('[SERVERS] PowerFailed');
+export const PowerReceived = createAction('[SERVERS] PowerReceived');
 
 export const getServers = () => async (dispatch) => {
     if (global.disableAutoRefresh!=true) {
@@ -116,6 +121,28 @@ export const getCoolFanConfig = (id) => async (dispatch) => {
     }
 };
 
+export const getPowerConfig = (id) => async (dispatch) => {
+    try
+    {
+        dispatch(PowerRequested());
+
+        const { data }: { data: IResult } = await api.get(`/api/react/power/${id}`);
+
+        if (data.ErrorCode < 0)
+            dispatch(PowerConfig({ code: data.ErrorCode, message: data.ErrorString }));
+        else
+        	dispatch(PowerGConfig(data.Data));
+    }
+    catch (e)
+    {
+        dispatch(PowerFailed({ code: null, message: e }));
+    }
+    finally
+    {
+        dispatch(PowerReceived());
+    }
+};
+
 export const edit = (id, result) => async (dispatch) => {
     try
     {
@@ -134,5 +161,26 @@ export const edit = (id, result) => async (dispatch) => {
     finally
     {
         dispatch(CoolFanReceived());
+    }
+};
+
+export const editPower = (id, result) => async (dispatch) => {
+    try
+    {
+        dispatch(PowerRequested());
+
+        const { data }: { data: IResult } = await api.post(`/api/react/power/${id}`, { servers: id, Configs: result });
+
+        if (data.ErrorCode < 0)
+            dispatch(PowerConfig(data.ErrorString));
+        else PowerConfig(true);
+    }
+    catch (e)
+    {
+        dispatch(PowerConfig(e));
+    }
+    finally
+    {
+        dispatch(PowerReceived());
     }
 };

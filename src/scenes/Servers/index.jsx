@@ -27,6 +27,7 @@ import ChartTemper from '~/components/ChartTemper';
 import * as actions from './actions';
 import Modal from '~/components/Modal';
 import CoolFan from '~/components/StatCoolFan';
+import StatPower from '~/components/StatPower';
 import { CloseIcon} from './styles';
 import FaCloseIcon from 'react-icons/lib/fa/close';
 import Button from '~/components/Button2';
@@ -77,6 +78,7 @@ export default class extends Component
 		activeChart: null,
 		showCharts: true,
 		iseditCoolFan: false,
+		iseditPower: false,
 		id: null,
 		ServerName: null,
         presseditCoolFan: false,
@@ -226,6 +228,34 @@ export default class extends Component
     	this.setState({ iseditCoolFan: true, id });
 	};
 
+    editPower = async (id) => {
+        //   this.setState({ presseditCoolFan: true });
+           await this.props.getPowerConfig(id);
+           this.setState({ iseditPower: true, id });
+           clearInterval(this.state.update);
+           clearInterval(this.state.update2);
+           if (this.props.auth.entities.authorized) {
+               this.setState({ update: setInterval(() => {
+                   this.props.getPowerConfig(id);
+               }, 5000) });
+           }
+       };
+
+       editPowerCancel() {
+        this.setState({ iseditPower: false });
+        clearInterval(this.state.update);
+        clearInterval(this.state.update2);
+        if (this.props.auth.entities.authorized) {
+            this.setState({ update: setInterval(() => {
+                this.props.getServers();
+            }, 10000) });
+            this.setState({ update2: setInterval(() => {
+                this.props.getCharts(false);
+            }, 15000) });
+        }
+//        this.setState({ presseditCoolFan: false });
+    }
+       
     render()
     {
         const { servers } = this.props;
@@ -342,8 +372,14 @@ export default class extends Component
                                         {
                                             label: 'Питание',
                                             index: 'power',
-                                            render: (value, record) => <a href={record.powerurl} > {value} </a>
-                                        },
+//                                            render: (value, record) => <a href={record.powerurl} > {value} </a>
+                                                render: (value, record) => 
+                                                ( 
+                                                    <div>
+                                                    {value < 0 ? '---' : <Tag>{ `${value}` }</Tag>}
+                                                    </div>
+                                                )
+                                                },
                                         {
                                             label: 'Хэшрейт',
                                             index: 'Hashrate',
@@ -368,6 +404,7 @@ export default class extends Component
                                     dataSource={servers.entities}
                                     onRowClick={(record) => { {clearInterval(this.state.update)} {clearInterval(this.state.update2)} {global.ServerID = record.ServerID} this.props.history.push(`/rigs/${record.ServerID}`) }}
                                     onRowClickFan={(record) => { {this.state.ServerName = record.ServerName} this.editCoolFan(record.ServerID) }}
+                                    onRowClickPower={(record) => { {this.state.ServerName = record.ServerName} this.editPower(record.ServerID) }}
 //                                    onRow={(record) => { this.state.currRow === record.index }}
                                     />
                                 : null
@@ -383,6 +420,19 @@ export default class extends Component
                                         id={this.state.id} 
                                         items={this.getSettings()} 
                                         onCancel={() => { this.editCoolFanCancel(); }} />
+                                </Modal> 
+                                : null }
+                        { this.state.iseditPower 
+                                ? <Modal unMount={() => this.editPowerCancel()} 
+                                        title = {"Параметры питания: "+this.state.ServerName}
+                                        loading={false}><StatPower 
+                                        editMode 
+//                                        canReboot="false" 
+                                        canEdit="true" 
+                                        alwaysEditMode2="true" 
+                                        id={this.state.id} 
+                                        items={this.getSettings()} 
+                                        onCancel={() => { this.editPowerCancel(); }} />
                                 </Modal> 
                                 : null }
             
