@@ -78,7 +78,8 @@ export default class extends Component
     {
         this.props.getServers().then(() => {
             this.setState({
-                currServId: global.ServerID
+                currServId: this.props.match.params.id
+//                currServId: global.ServerID
                 //currServId: this.props.servers.entities.ServerID
             })
         });
