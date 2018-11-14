@@ -20,6 +20,7 @@ export default class extends Component
         styleRow: (record) => ({}),
 		onRowClick: (record) => ({}),
 		onRowClickFan: (record) => ({}),
+		onRowClickPower: (record) => ({}),
 		hideHeader: false,
 		style: null,
 		footerRow: null
@@ -273,7 +274,7 @@ export default class extends Component
                             { source.map((item, index) => (
                                 <Row key={index} selected={this.state.selectedColumns.includes(item.RigID)} style={this.props.styleRow(item)}>
 									{ selected ? <SelectColumn { ...item } index={index} checked={selectedColumns.includes(item.RigID)} onChange={this.selectColumn} /> : null }
-                                    { columns.map((column) => <Column onClick={() => column.index == 'CoolFan' ? this.props.onRowClickFan(item):  this.props.onRowClick(item) } key={`${column.index}-${index}`} { ...column } record={ item } onRow={this.props.onRow} setColumnWidth={this.setColumnWidth} />) }
+                                    { columns.map((column) => <Column onClick={() => column.index == 'CoolFan' ? this.props.onRowClickFan(item): column.index == 'power' ? this.props.onRowClickPower(item) : this.props.onRowClick(item) } key={`${column.index}-${index}`} { ...column } record={ item } onRow={this.props.onRow} setColumnWidth={this.setColumnWidth} />) }
                                 </Row>
                             )) }
 							{ this.state.footerRow ?
