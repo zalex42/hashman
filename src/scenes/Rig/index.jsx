@@ -91,7 +91,7 @@ export default class extends Component
 		
         await this.props.getRig(this.props.match.params.id);
 		await this.props.getEvents(this.props.match.params.id);
-        await this.props.getChartsRig(this.props.match.params.id, true);
+        await this.props.getChartsRig(this.props.match.params.id, true, '');
 		
 		if (this.props.rig.error.message === 'NOT DATA') {
 			this.setState({ showCharts: false });
@@ -107,7 +107,7 @@ export default class extends Component
 			update2: setInterval(() => {
 				
 				this.props.getEvents(this.props.match.params.id);
-				this.props.getChartsRig(this.props.match.params.id, false);
+				this.props.getChartsRig(this.props.match.params.id, false, this.props.rig.lastIDEvents);
 				
 			}, 15000) 
 		});
@@ -331,7 +331,7 @@ export default class extends Component
 						</Paper>
 					</Col>
 					<Col xs={12} md={6} lg={3}>
-						<EventInformer items={rig.charts.Events} onCloseModal={() => { this.props.getChartsRig(this.props.match.params.id, false) }}></EventInformer>
+						<EventInformer items={rig.charts.Events} onCloseModal={() => { this.props.getChartsRig(this.props.match.params.id, false, this.props.rig.lastIDEvents) }}></EventInformer>
 					</Col>
 				</Row>
 					: null }

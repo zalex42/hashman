@@ -37,7 +37,7 @@ export default class extends Component
     async componentDidMount()
     {
         this.props.getRigs(this.props.server.ServerID);
-        await this.props.getCharts(this.props.server.ServerID);
+        await this.props.getCharts(this.props.server.ServerID, true, '');
 
         if (this.props.rigs.error.message === 'NOT DATA') {
         	this.props.showCharts();
@@ -76,7 +76,7 @@ export default class extends Component
 				this._showMessage('success', 'Успешно удалено');
 		}
  //       this.props.history.push(`/rigs/${this.props.server.ServerID}`);
-        this.props.getCharts(this.props.server.ServerID);
+        this.props.getCharts(this.props.server.ServerID, true, '');
         this.props.getRigs(this.props.server.ServerID);
     };
 
@@ -141,7 +141,7 @@ export default class extends Component
 
     editCancel() {
         this.setState({ editMode: false });
-        this.props.getCharts(this.props.server.ServerID);
+        this.props.getCharts(this.props.server.ServerID, true, '');
         this.props.getRigs(this.props.server.ServerID);
     }
     

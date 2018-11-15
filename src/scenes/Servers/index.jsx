@@ -89,7 +89,7 @@ export default class extends Component
     async componentDidMount()
     {
         this.props.getServers();
-        await this.props.getCharts(true);
+        await this.props.getCharts(true, '');
 
         if (this.props.servers.error.message === 'NOT DATA') this.setState({ showCharts: false });
 
@@ -98,7 +98,7 @@ export default class extends Component
                 this.props.getServers();
             }, 10000) });
             this.setState({ update2: setInterval(() => {
-                this.props.getCharts(false);
+                this.props.getCharts(false,this.props.servers.lastIDEvents);
             }, 15000) });
         }
     }
@@ -205,7 +205,7 @@ export default class extends Component
                 this.props.getServers();
             }, 10000) });
             this.setState({ update2: setInterval(() => {
-                this.props.getCharts(false);
+                this.props.getCharts(false, this.props.servers.lastIDEvents);
             }, 15000) });
         }
 //        this.setState({ presseditCoolFan: false });
@@ -250,7 +250,7 @@ export default class extends Component
                 this.props.getServers();
             }, 10000) });
             this.setState({ update2: setInterval(() => {
-                this.props.getCharts(false);
+                this.props.getCharts(false, this.props.servers.lastIDEvents);
             }, 15000) });
         }
 //        this.setState({ presseditCoolFan: false });

@@ -10,7 +10,9 @@ export const rigFailed = createAction('[RIG] Failed');
 export const rigSuccessed = createAction('[RIG] Successed');
 export const rigClear = createAction('[RIG] Clear');
 export const rigCharts = createAction('[RIG] Charts');
+export const rigChartsWithoutEvents = createAction('[RIG] ChartsWithoutEvents');
 export const rigChartsUpdate = createAction('[RIG] ChartsUpdate');
+export const rigChartsUpdateWithoutEvents = createAction('[RIG] ChartsUpdateWithoutEvents');
 export const rigEvents = createAction('[RIG] Events');
 
 export const getRig = (id) => async (dispatch) => {
@@ -35,20 +37,26 @@ export const getRig = (id) => async (dispatch) => {
     }
 };
 
-export const getChartsRig = (id, firstLaunch) => async (dispatch) => {
+export const getChartsRig = (id, firstLaunch, lastIDEvents) => async (dispatch) => {
     try
     {
         dispatch(rigRequested());
 
-        const { data }: { data: IResult } = await api.get(`/api/react/infographs?r=${id}${firstLaunch == false ? '&u=1' : ''}`);
+        const { data }: { data: IResult } = await api.get(`/api/react/infographs?r=${id}${firstLaunch == false ? '&u=1' : ''}${lastIDEvents != '' ? '&last='+lastIDEvents : ''}`);
 
         if (data.ErrorCode < 0)
             dispatch(rigFailed({ code: data.ErrorCode, message: data.ErrorString }));
         else
-            dispatch(rigCharts(data.Data));
             {firstLaunch == false ?
-                dispatch(rigChartsUpdate(data.Data)):
-                dispatch(rigCharts(data.Data))
+                data.Data.Events.length!=0 ?
+                    dispatch(rigChartsUpdate(data.Data))
+                :
+                    dispatch(rigChartsUpdateWithoutEvents(data.Data))
+            :
+                data.Data.Events.length!=0 ?
+                    dispatch(rigCharts(data.Data))
+                :    
+                  dispatch(rigChartsWithoutEvents(data.Data))
     
             };
     }

@@ -95,7 +95,7 @@ export default class extends Component
         }, 10000) });
         this.setState({ update2: setInterval(() => {
             if (this.state.currServId) {
-                this.props.getCharts2(this.state.currServId, false);
+                this.props.getCharts2(this.state.currServId, false, this.props.rigs.lastIDEvents);
             }
         }, 15000) });
     }
