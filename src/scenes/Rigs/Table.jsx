@@ -30,6 +30,7 @@ export default class extends Component
     rebootDis = true;
 	state = {
 		editMode: false,
+        update2: null,
 		ids: []
 	};
     deleteDis = true;
@@ -42,11 +43,16 @@ export default class extends Component
         if (this.props.rigs.error.message === 'NOT DATA') {
         	this.props.showCharts();
         }
+        this.setState({ update2: setInterval(() => {
+                this.props.getCharts(this.props.server.ServerID, false, this.props.rigs.lastIDEvents);
+        }, 15000) });
+
     }
 
     componentWillUnmount()
     {
         this.props.rigsClear();
+        clearInterval(this.state.update2);
     }
 
 	_showMessage = (type, message) => {

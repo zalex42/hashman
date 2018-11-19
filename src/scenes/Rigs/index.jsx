@@ -93,11 +93,11 @@ export default class extends Component
                 this.props.getRigs(this.state.currServId);
             }
         }, 10000) });
-        this.setState({ update2: setInterval(() => {
-            if (this.state.currServId) {
-                this.props.getCharts2(this.state.currServId, false, this.props.rigs.lastIDEvents);
-            }
-        }, 15000) });
+   //     this.setState({ update2: setInterval(() => {
+     //       if (this.state.currServId) {
+       //         this.props.getCharts2(this.state.currServId, false, this.props.rigs.lastIDEvents);
+         //   }
+        //}, 15000) });
     }
 
     setShowCharts = () => this.setState({ showCharts: false });
@@ -105,7 +105,7 @@ export default class extends Component
     componentWillUnmount()
     {
         clearInterval(this.state.update);
-        clearInterval(this.state.update2);
+        //clearInterval(this.state.update2);
     }
 
     getItems = () => {
@@ -166,11 +166,13 @@ export default class extends Component
     render()
     {
         const { servers, rigs, match } = this.props;
- //       rigs.charts  = servers.charts;
-        if (servers.charts.currentHashrate != undefined) 
-          rigs.charts.currentHashrate = servers.charts.currentHashrate;
-        if (servers.charts.currentTemperatures != undefined) 
-          rigs.charts.currentTemperatures  = servers.charts.currentTemperatures;
+        //rigs.charts  = servers.charts;
+        //if (servers.charts.currentHashrate != undefined) 
+            //rigs.charts.currentHashrate = servers.charts.currentHashrate;
+        //if (servers.charts.currentTemperatures != undefined) 
+//          rigs.charts.currentTemperatures  = servers.charts.currentTemperatures;
+//        rigs.charts.currentHashrate= { ...servers.charts.currentHashrate,  };
+  //      rigs.charts.currentTemperatures= { ...servers.charts.currentTemperatures,  };
         return (
             <div>
                 <Title>Устройства</Title>
