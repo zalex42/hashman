@@ -75,6 +75,7 @@ export default class extends Component
     state = {
         update: null,
         update2: null,
+        updateEvents: null,
 		activeChart: null,
 		showCharts: true,
 		iseditCoolFan: false,
@@ -82,10 +83,35 @@ export default class extends Component
 		id: null,
 		ServerName: null,
         presseditCoolFan: false,
-        currRow: null
+        currRow: null,
+        tempCopyEventsUpdate: null
     };
 
 
+    async UpdateEvents()
+    {
+        this.props.servers.EventsUpdate.map((Event) => {
+            this.props.servers.charts.Events.push(Event);
+        });
+	}
+
+
+    RunWithDelay=()=>{
+        if (this.props.servers.EventsUpdate.length !=0) {
+        global.tempCopyEventsUpdate = this.props.servers.EventsUpdate;
+        global.Events = this.props.servers.charts.Events;
+        setTimeout(function(){
+    
+            global.tempCopyEventsUpdate.map((Event) => {
+            global.Events.push(Event);
+        });
+    
+        }, 2000);//getcharts асихронная, поэтому запускаем обновление через 2секунды, чтобы гарантировать получение данных.
+        //в худшем случае обновление отобразится через 15 секунд.
+    
+    }
+    }
+ 
     async componentDidMount()
     {
         this.props.getServers();
@@ -97,10 +123,15 @@ export default class extends Component
             this.setState({ update: setInterval(() => {
                 this.props.getServers();
             }, 10000) });
+
             this.setState({ update2: setInterval(() => {
-                this.props.getCharts(false,this.props.servers.lastIDEvents);
+               this.props.getCharts(false, this.props.servers.lastIDEvents);
+               this.RunWithDelay();
             }, 15000) });
-        }
+//            this.setState({ updateEvents: setInterval(() => {
+  //               this.UpdateEvents();                
+    //         }, 16000) });
+         }
     }
 
     componentWillUnmount()
@@ -196,6 +227,7 @@ export default class extends Component
 		return group;
 	};
 
+
     editCoolFanCancel() {
         this.setState({ iseditCoolFan: false });
         clearInterval(this.state.update);
@@ -206,6 +238,7 @@ export default class extends Component
             }, 10000) });
             this.setState({ update2: setInterval(() => {
                 this.props.getCharts(false, this.props.servers.lastIDEvents);
+                this.UpdateEvents();                
             }, 15000) });
         }
 //        this.setState({ presseditCoolFan: false });
@@ -251,6 +284,7 @@ export default class extends Component
             }, 10000) });
             this.setState({ update2: setInterval(() => {
                 this.props.getCharts(false, this.props.servers.lastIDEvents);
+                this.UpdateEvents();                
             }, 15000) });
         }
 //        this.setState({ presseditCoolFan: false });

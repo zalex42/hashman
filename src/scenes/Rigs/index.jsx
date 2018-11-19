@@ -166,6 +166,11 @@ export default class extends Component
     render()
     {
         const { servers, rigs, match } = this.props;
+ //       rigs.charts  = servers.charts;
+        if (servers.charts.currentHashrate != undefined) 
+          rigs.charts.currentHashrate = servers.charts.currentHashrate;
+        if (servers.charts.currentTemperatures != undefined) 
+          rigs.charts.currentTemperatures  = servers.charts.currentTemperatures;
         return (
             <div>
                 <Title>Устройства</Title>
