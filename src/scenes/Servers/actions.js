@@ -46,7 +46,7 @@ export const getServers = () => async (dispatch) => {
 }
 };
 
-export const getCharts = (firstLaunch, lastIDEvents) => async (dispatch) => {
+export const getCharts = (firstLaunch = true, lastIDEvents = '') => async (dispatch) => {
     if (global.disableAutoRefresh!=true) {
         try
     {
