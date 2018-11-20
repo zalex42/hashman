@@ -103,7 +103,9 @@ export default class extends Component
         setTimeout(function(){
     
             global.tempCopyEventsUpdate.map((Event) => {
-            global.Events.push(Event);
+                global.Events.reverse();
+                global.Events.push(Event);
+                global.Events.reverse();
         });
     
         }, 2000);//getcharts асихронная, поэтому запускаем обновление через 2секунды, чтобы гарантировать получение данных.
@@ -126,6 +128,7 @@ export default class extends Component
 
             this.setState({ update2: setInterval(() => {
                this.props.getCharts(false, this.props.servers.lastIDEvents);
+               global.lastIDEvents = this.props.servers.lastIDEvents;
                this.RunWithDelay();
             }, 15000) });
 //            this.setState({ updateEvents: setInterval(() => {

@@ -46,11 +46,15 @@ export const getServers = () => async (dispatch) => {
 }
 };
 
-export const getCharts = (firstLaunch = true, lastIDEvents = '') => async (dispatch) => {
+export const getCharts = (firstLaunch = false, lastIDEvents) => async (dispatch) => {
+    if (lastIDEvents == undefined) 
+        lastIDEvents = global.lastIDEvents;
+
     if (global.disableAutoRefresh!=true) {
         try
     {
         dispatch(serversRequested());
+        
             const { data }: { data:IResult } = await api.get(`/api/react/infographs${firstLaunch == false ? '?u=1' : ''}${lastIDEvents != '' ? '&last='+lastIDEvents : ''}`);
 
 
