@@ -46,9 +46,9 @@ export const getServers = () => async (dispatch) => {
 }
 };
 
-export const getCharts = (firstLaunch = false, lastIDEvents) => async (dispatch) => {
-    if (lastIDEvents == undefined) 
-        lastIDEvents = global.lastIDEvents;
+export const getCharts = (firstLaunch, lastIDEvents) => async (dispatch) => {
+//    if (lastIDEvents == undefined) 
+  //      lastIDEvents = global.lastIDEvents;
 
     if (global.disableAutoRefresh!=true) {
         try
@@ -84,7 +84,7 @@ export const getCharts = (firstLaunch = false, lastIDEvents) => async (dispatch)
 }
 };
 
-export const getCharts2 = (id, firstLaunch, lastIDEvents) => async (dispatch) => {
+/*export const getCharts2 = (id, firstLaunch, lastIDEvents) => async (dispatch) => {
     if (global.disableAutoRefresh!=true) {
         try
     {
@@ -117,7 +117,8 @@ export const getCharts2 = (id, firstLaunch, lastIDEvents) => async (dispatch) =>
         dispatch(serversReceived());
     }
 }
-};
+};*/
+
 export const getCoolFanConfig = (id) => async (dispatch) => {
     try
     {

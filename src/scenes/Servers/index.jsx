@@ -128,7 +128,7 @@ export default class extends Component
 
             this.setState({ update2: setInterval(() => {
                this.props.getCharts(false, this.props.servers.lastIDEvents);
-               global.lastIDEvents = this.props.servers.lastIDEvents;
+//               global.lastIDEvents = this.props.servers.lastIDEvents;
                this.RunWithDelay();
             }, 15000) });
 //            this.setState({ updateEvents: setInterval(() => {
@@ -350,7 +350,7 @@ export default class extends Component
                         </Paper>
                     </Col>
                     <Col xs={12} md={6} lg={3}>
-                        <EventInformer items={servers.charts.Events} onCloseModal={this.props.getCharts}></EventInformer>
+                        <EventInformer items={servers.charts.Events} onCloseModal={() => {this.props.getCharts(false, this.props.servers.lastIDEvents)}}></EventInformer>
                     </Col>
                 </Row>
 				: null }
