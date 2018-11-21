@@ -35,6 +35,24 @@ export default class extends Component
 	};
     deleteDis = true;
 
+    RunWithDelay=()=>{
+        if (this.props.rigs.EventsUpdate.length !=0) {
+        global.tempCopyEventsUpdate = this.props.rigs.EventsUpdate;
+        global.Events = this.props.rigs.charts.Events;
+        setTimeout(function(){
+    
+            global.tempCopyEventsUpdate.map((Event) => {
+                global.Events.reverse();
+                global.Events.push(Event);
+                global.Events.reverse();
+        });
+    
+        }, 2000);//getcharts асихронная, поэтому запускаем обновление через 2секунды, чтобы гарантировать получение данных.
+        //в худшем случае обновление отобразится через 15 секунд.
+    
+    }
+    }
+
     async componentDidMount()
     {
         this.props.getRigs(this.props.server.ServerID);
@@ -45,7 +63,9 @@ export default class extends Component
         }
         this.setState({ update2: setInterval(() => {
                 this.props.getCharts(this.props.server.ServerID, false, this.props.rigs.lastIDEvents);
-        }, 15000) });
+                //global.lastIDEvents = this.props.rigs.lastIDEvents;
+                this.RunWithDelay();
+         }, 15000) });
 
     }
 

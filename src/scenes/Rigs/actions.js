@@ -39,6 +39,9 @@ export const getRigs = (id) => async (dispatch) => {
 };
 
 export const getCharts = (id, firstLaunch, lastIDEvents) => async (dispatch) => {
+ //   if (lastIDEvents == undefined) 
+ //       lastIDEvents = global.lastIDEvents;
+
     if (global.disableAutoRefresh!=true) {
         try
     {

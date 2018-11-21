@@ -24,7 +24,8 @@ const initialState: State = {
     charts: {},
 	gconfig: {},
 	config: true,
-	lastIDEvents: ''
+	lastIDEvents: '',
+    EventsUpdate: []
 };
 
 const reducer = createReducer({
@@ -34,8 +35,8 @@ const reducer = createReducer({
     [actions.rigsSuccessed]: (state, payload) => ({ ...state, entities: payload }),
     [actions.rigsCharts]: (state, payload) => ({ ...state, charts: payload ,lastIDEvents: payload.Events['0'].EventID }),
     [actions.rigsChartsWithoutEvents]: (state, payload) => ({ ...state, charts: payload ,lastIDEvents: '' }),
-    [actions.rigsChartsUpdate]: (state, payload) => ({ ...state, charts: {...state.charts, Events: payload.Events, currentHashrate: payload.currentHashrate, currentTemperatures: payload.currentTemperatures }, lastIDEvents: payload.Events['0'].EventID}),
-    [actions.rigsChartsUpdateWithoutEvents]: (state, payload) => ({ ...state, charts: {...state.charts, currentHashrate: payload.currentHashrate, currentTemperatures: payload.currentTemperatures }}),
+    [actions.rigsChartsUpdate]: (state, payload) => ({ ...state, charts: {...state.charts, currentHashrate: payload.currentHashrate, currentTemperatures: payload.currentTemperatures }, lastIDEvents: payload.Events['0'].EventID, EventsUpdate: payload.Events}),
+    [actions.rigsChartsUpdateWithoutEvents]: (state, payload) => ({ ...state, charts: {...state.charts, currentHashrate: payload.currentHashrate, currentTemperatures: payload.currentTemperatures }, EventsUpdate : []}),
     [actions.rigsGConfig]: (state, payload) => ({ ...state, gconfig: payload }),
     [actions.rigsConfig]: (state, payload) => ({ ...state, config: payload }),
     [actions.rigsClear]: () => initialState,
