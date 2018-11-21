@@ -23,7 +23,8 @@ const initialState: State = {
     entities: {},
     charts: {},
     events: [],
-	lastIDEvents: ''
+	lastIDEvents: '',
+    EventsUpdate: []
 };
 
 const reducer = createReducer({
@@ -33,8 +34,8 @@ const reducer = createReducer({
     [actions.rigSuccessed]: (state, payload) => ({ ...state, entities: payload }),
     [actions.rigCharts]: (state, payload) => ({ ...state, charts: payload , lastIDEvents: payload.Events['0'].EventID }),
     [actions.rigChartsWithoutEvents]: (state, payload) => ({ ...state, charts: payload , lastIDEvents: '' }),
-    [actions.rigChartsUpdate]: (state, payload) => ({ ...state, charts: {...state.charts, Events: payload.Events, currentHashrate: payload.currentHashrate, currentTemperatures: payload.currentTemperatures }, lastIDEvents: payload.Events['0'].EventID}),
-    [actions.rigChartsUpdateWithoutEvents]: (state, payload) => ({ ...state, charts: {...state.charts, currentHashrate: payload.currentHashrate, currentTemperatures: payload.currentTemperatures }, lastIDEvents: ''}),
+    [actions.rigChartsUpdate]: (state, payload) => ({ ...state, charts: {...state.charts,  currentHashrate: payload.currentHashrate, currentTemperatures: payload.currentTemperatures }, lastIDEvents: payload.Events['0'].EventID, EventsUpdate: payload.Events}),
+    [actions.rigChartsUpdateWithoutEvents]: (state, payload) => ({ ...state, charts: {...state.charts, currentHashrate: payload.currentHashrate, currentTemperatures: payload.currentTemperatures }, lastIDEvents: '', EventsUpdate : []}),
     [actions.rigEvents]: (state, payload) => ({ ...state, events: payload }),
     [actions.rigClear]: () => initialState,
 }, initialState);

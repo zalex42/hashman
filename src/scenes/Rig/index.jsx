@@ -86,6 +86,24 @@ export default class extends Component
 		settGr: []
     };
 
+    RunWithDelay=()=>{
+        if (this.props.rig.EventsUpdate.length !=0) {
+        global.tempCopyEventsUpdate = this.props.rig.EventsUpdate;
+        global.Events = this.props.rig.charts.Events;
+        setTimeout(function(){
+    
+            global.tempCopyEventsUpdate.map((Event) => {
+                global.Events.reverse();
+                global.Events.push(Event);
+                global.Events.reverse();
+        });
+    
+        }, 2000);//getcharts асихронная, поэтому запускаем обновление через 2секунды, чтобы гарантировать получение данных.
+        //в худшем случае обновление отобразится через 15 секунд.
+    
+    }
+    }
+
     async componentDidMount()
     {
 		
@@ -108,6 +126,7 @@ export default class extends Component
 				
 				this.props.getEvents(this.props.match.params.id);
 				this.props.getChartsRig(this.props.match.params.id, false, this.props.rig.lastIDEvents);
+                this.RunWithDelay();
 				
 			}, 15000) 
 		});

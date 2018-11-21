@@ -38,6 +38,8 @@ export const getRig = (id) => async (dispatch) => {
 };
 
 export const getChartsRig = (id, firstLaunch, lastIDEvents) => async (dispatch) => {
+ //   if (lastIDEvents == undefined) 
+  //      lastIDEvents = global.lastIDEvents;
     try
     {
         dispatch(rigRequested());
