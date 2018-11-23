@@ -82,11 +82,16 @@ export default class extends Component
 //                currServId: global.ServerID
                 //currServId: this.props.servers.entities.ServerID
             })
-        });
-    //    if (this.state.currServId) {
-      //      this.props.getRigs(this.state.currServId);
+            if (this.state.currServId == null && this.props.servers.entities.length != 0)
+            this.setState({
+                currServId: this.props.servers.entities["0"].ServerID
+            })
+            });
+        if (this.state.currServId) {
+            this.props.getRigs(this.state.currServId);
         //    this.props.getCharts2(this.state.currServId, true);
-        //}
+        }
+
     this.setState({ update: setInterval(() => {
             this.props.getServers();
             if (this.state.currServId) {
