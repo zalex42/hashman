@@ -134,6 +134,7 @@ export default class extends Component {
 	changeEnabled = (item, rootItem, index) => {
 		const copy = _.cloneDeep(this.state.tempCopyItems[rootItem]);
 		copy[index].isEnabled = !copy[index].isEnabled
+		copy[index].edited = true;
 		this.setState({
 			tempCopyItems: {
 				...this.state.tempCopyItems,
